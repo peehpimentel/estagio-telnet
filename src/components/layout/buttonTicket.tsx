@@ -45,7 +45,7 @@ export default function ButtonLayout({ loading, btnError, onSearchAction }: Butt
         className="mb-2"
         disabled={loading} // Desabilitado com base na prop de loading
       >
-        {loading ? "Carregando..." : "Enviar"}
+        {loading ? "Carregando..." : "Pesquisar"}
       </Button>
       {btnError && <p style={{ color: "red" }}>{btnError}</p>}
     </form>
