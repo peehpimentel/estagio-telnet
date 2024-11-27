@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   const username = '23';
-  const password = '9ca5c8569d7138f4c445ede486ec81ec6f411cfc9e8d93c9e53a707f2a43b0c9';
+  const password = '';
   const credentials = Buffer.from(${username}:${password}).toString('base64');
 
   // Corpo da requisição (vindo do cliente, se aplicável)
