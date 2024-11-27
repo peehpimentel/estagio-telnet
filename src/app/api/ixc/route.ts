@@ -1,15 +1,16 @@
 import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
+  require('dotenv').config();
   const username = '23';
-  const password = '';
+  const password = process.env.SECRET_KEY;
   const credentials = Buffer.from(${username}:${password}).toString('base64');
 
   // Corpo da requisição (vindo do cliente, se aplicável)
   const body = await request.json();
 
   try {
-    const response = await fetch('https://179.191.12.8/webservice/v1/su_ticket', {
+    const response = await fetch(process.env.SECRET_API, {
       method: 'POST',
       headers: {
         'Authorization': Basic ${credentials},
