@@ -53,15 +53,17 @@ async function getAssunto() {
 export default async function TicketPage() {
   const { data: clientesData, error: clienteError } = await getClientes();
   const { data: assuntoData, error: assuntoError } = await getAssunto();
-  
-  return (
 
+  return (
+    
     <div className="w-screen h-screen flex flex-col justify-center items-center">
+
       <h1 className="text-2xl font-bold mb-4">Novo Ticket</h1>
       <AutocompleteInput initialData={clientesData} hasError={clienteError} />
       <AutocompleteInput initialData={assuntoData} hasError={assuntoError} />
       <ParentComponent/>
-    </div>
 
+    </div>
+ 
   );
 }
