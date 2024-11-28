@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   dotenv.config();
   const username = process.env.SECRET_USERNAME;
   const password = process.env.SECRET_KEY;
-  const credentials = Buffer.from(`${username}:${password}`).toString('base64');
+  //const credentials = Buffer.from(`${username}:${password}`).toString('base64');
 
   try {
   // Corpo da requisição (vindo do cliente, se aplicável)
@@ -16,14 +16,17 @@ export async function POST(request: Request) {
   // Monta os dados do raw
   const raw = JSON.stringify({
     ...body,
-    token: `${credentials}`, // Inclua o token necessário
     redirect: "follow",
   });
+
+  const credentials = btoa(`${username}:${password}`);
 
   // O ! está dizendo ao TypeScript que a variável de ambiente SECRET_API não é indefinidade e nem vazia, e com isso não gera erro.
   const response = await fetch(process.env.SECRET_API!, { 
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', 
+      AUTHORIZATION: `Basic ${credentials}`, // Inclua o token necessário`
+     },
     body: raw,
   });
 
