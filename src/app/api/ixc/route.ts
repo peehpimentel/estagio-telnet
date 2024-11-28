@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import * as dotenv from 'dotenv'
+import { redirect } from 'next/dist/server/api-utils';
 
 // process.env.* é um objeto que contém todas as variáveis de ambiente armazenadas em qualquer pasta .env. Nesse uso, estamos mascarando os dados sensíveis senha, usuário e API.
 export async function POST(request: Request) {
@@ -8,39 +9,33 @@ export async function POST(request: Request) {
   const password = process.env.SECRET_KEY;
   const credentials = Buffer.from(`${username}:${password}`).toString('base64');
 
+  try {
   // Corpo da requisição (vindo do cliente, se aplicável)
   const body = await request.json();
 
+  // Monta os dados do raw
+  const raw = JSON.stringify({
+    ...body,
+    token: `${credentials}`, // Inclua o token necessário
+    redirect: "follow",
+  });
+
   // O ! está dizendo ao TypeScript que a variável de ambiente SECRET_API não é indefinidade e nem vazia, e com isso não gera erro.
-  try {
-    const response = await fetch(process.env.SECRET_API!, { 
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${credentials}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body), 
-    });
+  const response = await fetch(process.env.SECRET_API!, { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: raw,
+  });
 
-    if (!response.ok) {
-      throw new Error(`Erro: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return NextResponse.json(data);
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  const result = await response.json();
+  
+  // Retorna a resposta da API externa ao cliente
+  return NextResponse.json(result);
+  } catch (error) {
+    console.error('Erro ao enviar dados para a API:', error);
+    return NextResponse.json({ error: 'Falha ao processar a requisição' }, { status: 500 });
   }
 }
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,10 +1,12 @@
 import { prisma } from "../Libs/prisma";
-import AutocompleteInput from "../../components/common/AutoCompleteInput";
-import ParentComponent from "../../components/common/parentComponent"
+import  TicketForm  from '../../components/layout/TicketForm'
 
 async function getClientes() {
   try {
     const clientes = await prisma.cliente.findMany({
+      where: {
+        ativo: "S",
+      },
       select: {
         id: true,
         razao: true,
@@ -50,18 +52,41 @@ async function getAssunto() {
   }
 }
 
+interface Option {
+  id: number,
+  name: string,
+}
+
+interface TicketFormProps {
+  clientesData: Option[];
+  assuntoData: Option[];
+  clientesError: boolean;
+  assuntoError: boolean;
+}
+
 export default async function TicketPage() {
-  const { data: clientesData, error: clienteError } = await getClientes();
+
+  const [clientesResponse, assuntosResponse] = await Promise.all([
+    getClientes(),
+    getAssunto(),
+  ]);
+
+  const { data: clientesData, error: clientesError } = await getClientes();
   const { data: assuntoData, error: assuntoError } = await getAssunto();
+
+  const formData: TicketFormProps = {
+    clientesData,
+    assuntoData,
+    clientesError,
+    assuntoError,
+  };
 
   return (
     
     <div className="w-screen h-screen flex flex-col justify-center items-center">
 
       <h1 className="text-2xl font-bold mb-4">Novo Ticket</h1>
-      <AutocompleteInput initialData={clientesData} hasError={clienteError} />
-      <AutocompleteInput initialData={assuntoData} hasError={assuntoError} />
-      <ParentComponent/>
+      <TicketForm {...formData}/>
 
     </div>
  

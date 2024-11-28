@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Search, AlertCircle } from 'lucide-react';
 
 //
@@ -13,55 +13,89 @@ interface Option {
 interface AutocompleteInputProps {
   initialData: Option[];
   hasError: boolean;
+  placeholder?: string;
+  onChange?: (valeu: Option) => void;
+  value: string;
 }
 
-export default function AutocompleteInput({ initialData, hasError }: AutocompleteInputProps) {
-  const [inputValue, setInputValue] = useState('');
+export default function AutocompleteInput({ 
+  initialData, 
+  hasError, 
+  placeholder, 
+  onChange, 
+  value 
+}: AutocompleteInputProps) {
+
   const [suggestions, setSuggestions] = useState<Option[]>(initialData);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (initialData) {
+      setSuggestions(initialData);
+    }
+  }, [initialData]);
 
   // se não ter erros e o valor do input for vazio, altera a sugestão para o primeiro valor do Option.
-  useEffect(() => {
+  const filteredSuggestions = (value: string) => {
     if (!hasError) {
-      if (inputValue.trim() === '') { 
+      if (value.trim() === '') { 
         setSuggestions(initialData);
       } else {
         // caso não tenha espaço vazio, altera a sugestão para a selecionada.
         const filteredSuggestions = initialData.filter(item =>
-          item.name.toLowerCase().includes(inputValue.toLowerCase())
+          item.name.toLowerCase().includes(value.toLowerCase())
         );
         setSuggestions(filteredSuggestions);
       }
     }
-  }, [inputValue, initialData, hasError]);
+  };
 
 
 // mostra "sugestões" caso não tenha nenhum erro, ou seja, mostra todos os valores para selecionar.
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    if (!hasError) {
-      setShowSuggestions(true);
+    const value = e.target.value;
+    filteredSuggestions(value);
+    setShowSuggestions(true);
+    if (onChange) {
+      onChange({ id: 0, name: value }); // Atualiza o valor do campo com o texto digitado
     }
   };
 
 // mantém apenas o valor selecionado no input
   const handleSelectOption = (option: Option) => {
-    setInputValue(option.name);
+    if (onChange) {
+      onChange(option); // Passa a opção selecionada para o onChange
+    }
     setShowSuggestions(false);
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setShowSuggestions(false);
+    }, 200);
+  };
+
+  const handleFocus = () => {
+    if (!hasError) {
+      filteredSuggestions(value);
+      setShowSuggestions(true);
+    }
   };
 
   return (
     <div className="relative w-full max-w-md">
       <div className="relative">
         <input
+          ref={inputRef}
           type="text"
-          value={inputValue}
+          value={value}
           onChange={handleInputChange}
-          onFocus={() => !hasError && setShowSuggestions(true)}
-          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)} // delay para o dropdown.
+          onFocus={handleFocus}
+          onBlur={handleBlur} // delay para o dropdown.
           className={`w-full p-2 border mb-2 rounded-md focus:outline-none focus:ring-2 bg-gray-800 text-gray-200 
             ${hasError ? 'focus:ring-yellow-500 border-yellow-300' : 'focus:ring-blue-500'}` }
-          placeholder={hasError ? "Digite um opção..." : "Digite ou selecione uma opção..."}
+          placeholder={placeholder || 'Escolha um registro'}
         />
 
         {hasError ? (
@@ -71,7 +105,7 @@ export default function AutocompleteInput({ initialData, hasError }: Autocomplet
         )}
       </div>
       
-      {!hasError && showSuggestions && (
+      {!hasError && showSuggestions && suggestions.length > 0 && (
         <ul className="absolute w-full mt-1 bg-gray-800  border rounded-md shadow-lg max-h-60 overflow-auto z-10">
           {suggestions.map((option) => (
             <li
@@ -83,7 +117,7 @@ export default function AutocompleteInput({ initialData, hasError }: Autocomplet
             </li>
           ))}
           {/* se o tamanho da sugestão for igual a 0, aparece uma mensagem de erro. */}
-          {suggestions.length === 0 && (
+          {!hasError && showSuggestions && suggestions.length === 0 && (
             <li className="px-4 py-2 text-red-700">Nenhum resultado encontrado</li>
           )}
         </ul>
