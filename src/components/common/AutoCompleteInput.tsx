@@ -95,7 +95,7 @@ export default function AutocompleteInput({
           onBlur={handleBlur} // delay para o dropdown.
           className={`w-full p-2 border mb-2 rounded-md focus:outline-none focus:ring-2 bg-gray-800 text-gray-200 
             ${hasError ? 'focus:ring-yellow-500 border-yellow-300' : 'focus:ring-blue-500'}` }
-          placeholder={placeholder || 'Escolha um registro'}
+          placeholder={placeholder || 'Buscar...'}
         />
 
         {hasError ? (

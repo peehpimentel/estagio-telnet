@@ -83,7 +83,7 @@ export default async function TicketPage() {
 
   return (
     
-    <div className="w-screen h-screen flex flex-col justify-center items-center">
+    <div className="w-screen h-screen flex flex-col  items-center overflow-x-hidden">
 
       <h1 className="text-2xl font-bold mb-4">Novo Ticket</h1>
       <TicketForm {...formData}/>
