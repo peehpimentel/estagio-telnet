@@ -9,8 +9,8 @@ interface RadioGroupEnderecoProps {
   export default function RadioGroupEndereco({ onChange, value }: RadioGroupEnderecoProps) {
     return (
       <RadioGroup value={value} onValueChange={onChange} > {/* onValueChange em vez de onChange */}
-     <fieldset className="bg-gray-800 text-gray-200 px-4 py-2 
-     rounded border border-gray-700 focus:outline-none focus:border-blue-500">
+     <fieldset className="text-gray-200 px-4 py-2 
+     rounded focus:outline-none focus:border-blue-500">
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="c" id="r1" />
             <Label htmlFor="r1">Cliente</Label>

@@ -87,208 +87,285 @@ export default function TicketForm({
 
   return (
     <form onSubmit={handleSubmit} >
-      <div className="flex items-center space-x-2">      
-        <legend>Cliente: </legend>
-        <AutocompleteInput
-        placeholder="Escolha o cliente"
-        initialData={clientesData}
-        hasError={clientesError}
-        onChange={(value) => setCliente(value)} 
-        value={cliente?.name || ''} 
+
+    <div className="grid gap-2 w-full max-w-lg mx-auto">
+
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="cliente" 
+        className="text-md font-medium text-gray-300">Cliente: </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          placeholder="Escolha o cliente"
+          initialData={clientesData}
+          hasError={clientesError}
+          onChange={(value) => setCliente(value)} 
+          value={cliente?.name || ''}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="filial" 
+        className="text-md font-medium text-gray-300">Filial: </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          placeholder="Escolha a filial"
+          initialData={clientesData}
+          hasError={clientesError}
+          onChange={(value) => setCliente(value)} 
+          value={cliente?.name || ''} 
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="assunto" 
+        className="text-md font-medium text-gray-300">Assunto: </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          placeholder="Escolha o assunto"
+          initialData={assuntoData}
+          hasError={assuntoError}
+          onChange={(value) => setAssunto(value)} 
+          value={assunto?.name || ''} 
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="descricao" 
+        className="text-md font-medium text-gray-300">Descrição do assunto: </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          placeholder=""
+          initialData={assuntoData}
+          hasError={assuntoError}
+          onChange={(value) => setAssunto(value)} 
+          value={assunto?.name || ''} 
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="origem-endereco" 
+        className="text-md font-medium text-gray-300">Origem do endereço: </label>
+        <div className="col-span-2">
+          <RadioGroupEndereco
+            value={endereco}
+            onChange={setPrioridade} 
+          />
+        </div>  
+      </div>
+
+      <div className="grid grid-cols-3 items-center gap-2">
+        <label
+          htmlFor="endereco"
+          className="text-md font-medium text-gray-300 col-span-1"
+        >Endereço: </label>
+      <div className="col-span-2 flex">
+        <input
+          id="endereco"
+          type="text"
+          className="flex-grow rounded-l-lg bg-gray-800 text-gray-200 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        <Button
+          color="blue"
+          className="rounded-l-none px-4 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none whitespace-nowrap"
+        >Marcar coordenadas</Button>
       </div>
-
-      <div className="flex items-center space-x-2">      
-        <legend>Filial: </legend>
-        <AutocompleteInput
-        placeholder="Escolha a filial"
-        initialData={clientesData}
-        hasError={clientesError}
-        onChange={(value) => setCliente(value)} 
-        value={cliente?.name || ''} 
-        />
-      </div>
-
-      <div className="flex items-center space-x-2">      
-        <legend>Assunto: </legend>
-        <AutocompleteInput
-        placeholder="Escolha o assunto"
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
-      </div>
-
-      <div className="flex items-center space-x-2">      
-        <legend>Descrição do assunto: </legend>
-        <AutocompleteInput
-        placeholder=""
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
-      </div>
-
-      <div className="flex items-center space-x-2 mb-2">      
-        <legend>Origem do endereço: </legend>
-        <RadioGroupEndereco
-          value={endereco}
-          onChange={setPrioridade} 
-        />
-      </div>
-      <div className="flex items-center space-x-2 mb-2">      
-        <legend>Endereço: </legend>
-        <Button.Group>
-        <TextInput/>
-        <Button color="info">Marcar coordenadas</Button>
-        </Button.Group>
-      </div>
-
-      <div className="flex items-center space-x-2 mb-2">      
-        <legend>Latitude: </legend>
-      <TextInput disabled/>
-      </div>
-
-      <div className="flex items-center space-x-2 mb-2">      
-        <legend>Longitude: </legend>
-      <TextInput disabled/>
-      </div>
-
-      <div className="flex items-center space-x-2">      
-        <legend>Processo: </legend>
-        <AutocompleteInput
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
-      </div>
-      
-      <div className="flex items-center space-x-2">      
-        <legend>Departamento: </legend>
-        <AutocompleteInput
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
-      </div>
-
-      <div className="flex items-center space-x-2">      
-        <legend>Colabordor responsável: </legend>
-        <AutocompleteInput
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
-      </div>
-
-      <div className="flex items-center space-x-2 mb-2">      
-        <legend>Prioridade: </legend>
-        <RadioGroupPrioridade 
-        value={prioridade}
-        onChange={setEndereco} 
-        />
-      </div>
-
-      <div className="flex items-center space-x-2">      
-        <legend>Data reservada: </legend>
-        <Datepicker language="pt-BR" labelTodayButton="Hoje" labelClearButton="Limpar" className='mb-2'/>
     </div>
 
-    <div className="flex items-center space-x-2 mb-2">      
-      <legend>Melhor horário reserva: </legend>
-        <RadioGroupHorario 
-        value={horario}
-        onChange={setHorario} 
-        />
+        <div className="grid grid-cols-3 items-center">      
+          <label htmlFor="latitude" 
+          className="text-md font-medium text-gray-300">Latitude: </label>
+          <div className="col-span-2">
+            <TextInput disabled/>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 items-center">      
+          <label htmlFor="longitude" 
+          className="text-md font-medium text-gray-300">Longitude: </label>
+          <div className="col-span-2">
+            <TextInput disabled/>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 items-center">      
+          <label htmlFor="processo" 
+          className="text-md font-medium text-gray-300">Processo: </label>
+          <div className="col-span-2">
+            <AutocompleteInput
+            initialData={assuntoData}
+            hasError={assuntoError}
+            onChange={(value) => setAssunto(value)} 
+            value={assunto?.name || ''} 
+            />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-3 items-center">      
+          <label htmlFor="departamento" 
+          className="text-md font-medium text-gray-300">Departamento: </label>
+          <div className="col-span-2">
+            <AutocompleteInput
+            initialData={assuntoData}
+            hasError={assuntoError}
+            onChange={(value) => setAssunto(value)} 
+            value={assunto?.name || ''} 
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 items-center">      
+          <label htmlFor="colaborador" 
+          className="text-md font-medium text-gray-300">Colaborador responsável: </label>
+          <div className="col-span-2">
+            <AutocompleteInput
+            initialData={assuntoData}
+            hasError={assuntoError}
+            onChange={(value) => setAssunto(value)} 
+            value={assunto?.name || ''} 
+            />
+          </div>
+        </div>
+        
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="prioridade" 
+        className="text-md font-medium text-gray-300">Prioridade: </label>
+        <div className="col-span-2">
+          <RadioGroupPrioridade 
+          value={prioridade}
+          onChange={setEndereco} 
+          />
+        </div> 
       </div>
 
-    <div className="flex items-center space-x-2 mb-2">      
-      <legend>Origem: </legend>
-        <RadioGroupOrigem 
-        value={origem}
-        onChange={setOrigem} 
-        />
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="data-reservada" 
+        className="text-md font-medium text-gray-300 ">Data reservada: </label>
+        <div className="col-span-2">
+          <input type="date" name="date" id="date" className="border rounded-md shadow-sm
+         focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200"/>
+        </div>
+    </div>
+
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="horario" 
+        className="text-md font-medium text-gray-300 ">Melhor horário reserva: </label>
+        <div className="col-span-2">
+          <RadioGroupHorario 
+          value={horario}
+          onChange={setHorario} 
+          />
+        </div> 
       </div>
 
-      <div className="flex items-center space-x-2">      
-        <legend>Resposta padrão: </legend>
-        <AutocompleteInput
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="origem" 
+        className="text-md font-medium text-gray-300">Origem: </label>
+        <div className="col-span-2">
+          <RadioGroupOrigem 
+          value={origem}
+          onChange={setOrigem} 
+          />
+        </div>
       </div>
 
-      <div className="flex items-center space-x-2 mb-2">      
-        <legend>Descrição: </legend>
-        <Textarea
-          value={menssagem}
-          onChange={(e) => setMenssagem(e.target.value)}
-        />
+    <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="resposta-padrao" 
+        className="text-md font-medium text-gray-300">Resposta padrão: </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          initialData={assuntoData}
+          hasError={assuntoError}
+          onChange={(value) => setAssunto(value)} 
+          value={assunto?.name || ''} 
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="descricao-mensagem" 
+        className="text-md font-medium text-gray-300">Descrição: </label>
+        <div className="col-span-2">
+          <textarea
+            value={menssagem}
+            onChange={(e) => setMenssagem(e.target.value)}
+            rows={4}
+            className="w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200"
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="interacao" 
+        className="text-md font-medium text-gray-300">Interação pendente: </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          initialData={assuntoData}
+          hasError={assuntoError}
+          onChange={(value) => setAssunto(value)} 
+          value={assunto?.name || ''} 
+          />
+        </div>
       </div>
 
-      <div className="flex items-center space-x-2">      
-        <legend>Interação pendente: </legend>
-        <AutocompleteInput
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="status" 
+        className="text-md font-medium text-gray-300 ">Status: </label>
+          <Button.Group className="cols-span-full mb-2">
+            <Button className="bg-blue-600 text-white" disabled aria-selected>
+              Novo
+            </Button>
+            <Button className="bg-gray-200 text-gray-800" disabled>
+              Pendente
+            </Button>
+            <Button className="bg-gray-200 text-gray-800 whitespace-nowrap" disabled>
+              Em progresso
+            </Button>
+            <Button className="bg-gray-200 text-gray-800" disabled>
+              Solucionado
+            </Button>
+            <Button className="bg-gray-200 text-gray-800" disabled>
+              Cancelado
+            </Button>
+          </Button.Group>
       </div>
 
-      <div className="flex items-center space-x-2">      
-        <legend>Status: </legend>
-        <Button.Group className='mb-2'>
-          <Button className="bg-blue-600 text-white" disabled aria-selected>
-            Novo
-          </Button>
-          <Button className="bg-gray-200 text-gray-800" disabled>
-            Pendente
-          </Button>
-          <Button className="bg-gray-200 text-gray-800" disabled>
-            Em progresso
-          </Button>
-          <Button className="bg-gray-200 text-gray-800" disabled>
-            Solucionado
-          </Button>
-          <Button className="bg-gray-200 text-gray-800" disabled>
-            Cancelado
-          </Button>
-        </Button.Group>
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="status-complementar" 
+        className="text-md font-medium text-gray-300">Status complementar: </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          initialData={assuntoData}
+          hasError={assuntoError}
+          onChange={(value) => setAssunto(value)} 
+          value={assunto?.name || ''} 
+          />
+        </div>
       </div>
 
-      <div className="flex items-center space-x-2">      
-        <legend>Status complementar: </legend>
-        <AutocompleteInput
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="canal-atendimento" 
+        className="text-md font-medium text-gray-300">Canal de atendimento: </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          initialData={assuntoData}
+          hasError={assuntoError}
+          onChange={(value) => setAssunto(value)} 
+          value={assunto?.name || ''} 
+          />
+        </div>
       </div>
 
-      <div className="flex items-center space-x-2">      
-        <legend>Canal de atendimento: </legend>
-        <AutocompleteInput
-        initialData={assuntoData}
-        hasError={assuntoError}
-        onChange={(value) => setAssunto(value)} 
-        value={assunto?.name || ''} 
-        />
+      <div className="grid grid-cols-3 items-center">      
+        <label htmlFor="ultima-atualizacao" 
+        className="text-md font-medium text-gray-300">Última atualização: </label>
+        <div className="col-span-2">
+          <TextInput placeholder="CURRENT_TIMESTAMP"disabled/>
+        </div>
       </div>
-
-      <div className="flex items-center space-x-2 mb-2">      
-        <legend>Última atualização: </legend>
-      <TextInput placeholder="CURRENT_TIMESTAMP"disabled/>
-      </div>
-
+    </div>
+    <div className=" flex flex-col items-center overflow-x-hidden">
       <button
         type="submit"
         disabled={isLoading}
@@ -296,6 +373,7 @@ export default function TicketForm({
       >
         {isLoading ? 'Enviando...' : 'Enviar'}
       </button>
+    </div>
     </form>
   );
 }
