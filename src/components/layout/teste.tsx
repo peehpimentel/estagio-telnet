@@ -14,22 +14,36 @@ interface Option {
   name: string;
 }
 
-interface TicketFormProps {
+interface TesteFormProps {
   clientesData: Option[];
   assuntoData: Option[];
+  filialData: Option[];
+  departamentoData: Option[];
+  funcionariosData: Option[];
   clientesError: boolean;
   assuntoError: boolean;
+  filialError: boolean;
+  departamentoError: boolean;
+  funcionariosError: boolean;
 }
 
-export default function TicketForm({
+export default function TesteForm({
   clientesData,
   assuntoData,
+  filialData,
+  departamentoData,
+  funcionariosData,
   clientesError,
   assuntoError,
-}: TicketFormProps) {
-
+  filialError,
+  departamentoError,
+  funcionariosError,
+}: TesteFormProps) {
   const [cliente, setCliente] = useState<Option | null>(null);
   const [assunto, setAssunto] = useState<Option | null>(null);
+  const [filial, setFilial] = useState<Option | null>(null);
+  const [departamento, setDepartamento] = useState<Option | null>(null);
+  const [funcionarios, setFuncionarios] = useState<Option | null>(null);
   const [prioridade, setPrioridade] = useState<string>(''); 
   const [horario, setHorario] = useState<string>(''); 
   const [origem, setOrigem] = useState<string>(''); 
@@ -69,7 +83,7 @@ export default function TicketForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!cliente || !assunto || !prioridade || !menssagem || endereco) {
+    if (!cliente || !assunto || !filial || !departamento) {
       alert('Preencha todos os campos antes de enviar.');
       return;
     }
@@ -77,6 +91,7 @@ export default function TicketForm({
     const payload = {
       "id_cliente": cliente.id,
       "id_assunto": assunto.id,
+      "id_filial": filial.id,
       "prioridade": prioridade,
       "menssagem": menssagem,
       "tipo": "C",
@@ -84,9 +99,7 @@ export default function TicketForm({
       "id_ticket_setor": "5",
       "su_status": "N",
       "origem_endereco": endereco
-    };
-    console.log(payload);
-    
+    };  
 
     setIsLoading(true);
     submitData(payload);
@@ -103,7 +116,7 @@ export default function TicketForm({
           <div className="col-span-2">
             <TextInput className="rounded-md px-0 w-24 bg-gray-800 text-gray-200" maxLength={11} disabled/>
           </div>
-      </div>
+      </div> 
 
       <div className="grid grid-cols-3 items-center gap-5">      
         <label htmlFor="origem" 
@@ -114,7 +127,7 @@ export default function TicketForm({
           onChange={setTipo} 
           />
         </div>
-      </div>
+      </div> 
 
       <div className="grid grid-cols-3 items-center gap-5">      
           <label htmlFor="protocolo" 
@@ -122,7 +135,7 @@ export default function TicketForm({
           <div className="col-span-2">
             <TextInput className="rounded-md px-0 w-40 bg-gray-800 text-gray-200" maxLength={15} disabled/>
           </div>
-      </div>
+      </div> 
       
       <div className="grid grid-cols-3 items-center gap-5">      
         <label htmlFor="cliente" 
@@ -146,10 +159,10 @@ export default function TicketForm({
         <div className="col-span-2">
           <AutocompleteInput
           placeholder="Escolha a filial"
-          initialData={clientesData}
-          hasError={clientesError}
-          onChange={(value) => setCliente(value)} 
-          value={cliente?.name || ''} 
+          initialData={filialData}
+          hasError={filialError}
+          onChange={(value) => setFilial(value)} 
+          value={filial?.name || ''} 
           />
         </div>
       </div>
@@ -168,7 +181,7 @@ export default function TicketForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 items-center gap-5">      
+       <div className="grid grid-cols-3 items-center gap-5">      
         <label htmlFor="descricao" 
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Descrição do assunto: </label>
         <div className="col-span-2">
@@ -193,7 +206,7 @@ export default function TicketForm({
         </div>  
       </div>
 
-      <div className="grid grid-cols-3 items-center gap-5">
+      {/* <div className="grid grid-cols-3 items-center gap-5">
         <label
           htmlFor="endereco"
           className="text-md font-medium text-gray-300 
@@ -228,17 +241,17 @@ export default function TicketForm({
           <div className="col-span-2">
             <TextInput className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
           </div>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-3 items-center gap-5">      
           <label htmlFor="processo" 
           className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Processo: </label>
           <div className="col-span-2">
             <AutocompleteInput
-            initialData={assuntoData}
-            hasError={assuntoError}
-            onChange={(value) => setAssunto(value)} 
-            value={assunto?.name || ''} 
+            initialData={departamentoData}
+            hasError={departamentoError}
+            onChange={(value) => setDepartamento(value)} 
+            value={departamento?.name || ''} 
             />
           </div>
         </div>
@@ -247,11 +260,11 @@ export default function TicketForm({
           <label htmlFor="departamento" 
           className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Departamento: </label>
           <div className="col-span-2">
-            <AutocompleteInput
-            initialData={assuntoData}
-            hasError={assuntoError}
-            onChange={(value) => setAssunto(value)} 
-            value={assunto?.name || ''} 
+          <AutocompleteInput
+            initialData={departamentoData}
+            hasError={departamentoError}
+            onChange={(value) => setDepartamento(value)} 
+            value={departamento?.name || ''} 
             />
           </div>
         </div>
@@ -261,10 +274,10 @@ export default function TicketForm({
           className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Colaborador responsável: </label>
           <div className="col-span-2">
             <AutocompleteInput
-            initialData={assuntoData}
-            hasError={assuntoError}
-            onChange={(value) => setAssunto(value)} 
-            value={assunto?.name || ''} 
+            initialData={funcionariosData}
+            hasError={funcionariosError}
+            onChange={(value) => setFuncionarios(value)} 
+            value={funcionarios?.name || ''} 
             />
           </div>
         </div>

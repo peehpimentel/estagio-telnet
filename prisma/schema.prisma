@@ -359,6 +359,353 @@ model su_oss_assunto {
   @@index([ultima_atualizacao], map: "ultima_atualizacao")
 }
 
+model su_ticket {
+  id                        Int                                  @id @default(autoincrement())
+  id_ticket_status          Int?
+  id_usuarios               Int?
+  titulo                    String                               @db.VarChar(200)
+  data_criacao              DateTime?                            @db.DateTime(0)
+  data_ultima_alteracao     DateTime                             @db.DateTime(0)
+  prioridade                su_ticket_prioridade
+  id_ticket_origem          su_ticket_id_ticket_origem?
+  id_ticket_setor           Int
+  menssagem                 String                               @db.LongText
+  id_cliente                Int
+  status                    su_ticket_status_enum
+  protocolo                 String?                              @db.VarChar(15)
+  mensagens_nao_lida_cli    Int                                  @default(0)
+  mensagens_nao_lida_sup    Int                                  @default(0)
+  token                     String?                              @db.VarChar(64)
+  data_hora_os_aberta       DateTime?                            @db.DateTime(0)
+  data_hora_os_execucao     DateTime?                            @db.DateTime(0)
+  data_hora_execucao        DateTime?                            @db.DateTime(0)
+  data_hora_os_encaminhada  DateTime?                            @db.DateTime(0)
+  id_wfl_processo           Int?
+  id_assunto                Int?
+  id_resposta               Int?
+  latitude                  String?                              @db.VarChar(50)
+  longitude                 String?                              @db.VarChar(50)
+  id_login                  Int?
+  endereco                  String?                              @db.VarChar(150)
+  origem_endereco           su_ticket_origem_endereco?
+  id_contrato               Int?
+  id_circuito               Int?
+  id_su_diagnostico         Int?
+  status_sla                String?                              @db.Char(1)
+  id_filial                 Int?
+  id_responsavel_tecnico    Int?
+  su_status                 su_ticket_su_status
+  interacao_pendente        su_ticket_interacao_pendente
+  id_evento_status_processo Int
+  melhor_horario_agenda     su_ticket_melhor_horario_agenda?     @default(Q)
+  data_reservada            DateTime?                            @db.Date
+  melhor_horario_reserva    su_ticket_melhor_horario_reserva?    @default(Q)
+  origem_cadastro           su_ticket_origem_cadastro            @default(P)
+  id_canal_atendimento      Int?
+  ultima_atualizacao        DateTime                             @default(now()) @db.Timestamp(0)
+  tipo                      su_ticket_tipo?                      @default(C)
+  id_estrutura              Int?
+  origem_endereco_estrutura su_ticket_origem_endereco_estrutura?
+
+  @@index([data_reservada], map: "data_reservada")
+  @@index([id_assunto], map: "id_assunto")
+  @@index([id_circuito], map: "id_circuito")
+  @@index([id_cliente], map: "id_cliente")
+  @@index([id_contrato], map: "id_contrato")
+  @@index([id_estrutura], map: "id_estrutura")
+  @@index([id_login], map: "id_login")
+  @@index([id_resposta], map: "id_resposta")
+  @@index([id_su_diagnostico], map: "id_su_diagnostico")
+  @@index([id_ticket_setor], map: "id_ticket_setor")
+  @@index([id_ticket_status], map: "id_ticket_status")
+  @@index([id_usuarios], map: "id_usuarios_2")
+  @@index([id_wfl_processo], map: "id_wfl_processo")
+  @@index([protocolo], map: "protocolo")
+  @@index([ultima_atualizacao], map: "ultima_atualizacao")
+}
+
+model filial {
+  id                                           Int                                                @id @default(autoincrement())
+  razao                                        String?                                            @db.VarChar(100)
+  id_empresa                                   Int?
+  fantasia                                     String                                            @db.VarChar(100)
+  cidade                                       Int?
+  endereco                                     String?                                            @db.VarChar(200)
+  numero                                       String?                                            @db.VarChar(20)
+  cep                                          String?                                            @db.VarChar(20)
+  ie                                           String?                                            @db.VarChar(20)
+  cnpj                                         String?                                            @db.VarChar(30)
+  telefone                                     String?                                            @db.VarChar(20)
+  telefone1                                    String?                                            @db.VarChar(20)
+  fax                                          String?                                            @db.VarChar(20)
+  regime_tributario                            Int?
+  ato_anatel                                   String?                                            @db.VarChar(100)
+  im                                           String?                                            @db.VarChar(15)
+  cnae                                         String?                                            @db.VarChar(7)
+  rt                                           filial_rt?                                         @default(UM)
+  complemento                                  String?                                            @db.VarChar(60)
+  bairro                                       String                                             @db.VarChar(60)
+  iest                                         String?                                            @db.VarChar(14)
+  logo                                         String?                                            @db.VarChar(200)
+  nfe_ambiente                                 filial_nfe_ambiente?
+  nfe_formato_imp                              filial_nfe_formato_imp?
+  nfe_canhoto                                  filial_nfe_canhoto?
+  nfe_certificado                              String?                                            @db.VarChar(500)
+  nfe_chave                                    String?                                            @db.VarChar(50)
+  nfe_email                                    String?                                            @db.VarChar(255)
+  nfe_email_senha                              String?                                            @db.VarChar(100)
+  email                                        String?                                            @db.VarChar(250)
+  site                                         String?                                            @db.VarChar(250)
+  nfe_inf_complementar                         String?                                            @db.LongText
+  contato                                      String?                                            @db.VarChar(100)
+  background_cor                               String?                                            @db.VarChar(20)
+  background_logo                              String?                                            @db.VarChar(250)
+  im_numero_creci                              String?                                            @db.VarChar(30)
+  tipo_pessoa                                  filial_tipo_pessoa?                                @default(J)
+  sici_numero_fistel                           String?                                            @db.VarChar(20)
+  desc_auxiliar_fone_os                        String?                                            @db.VarChar(150)
+  ramal                                        String?                                            @db.VarChar(10)
+  rt_especial                                  String?                                            @default("00") @db.Char(2)
+  insentivo_cultural                           filial_insentivo_cultural?                         @default(Z0)
+  opcao_simples                                filial_opcao_simples?                              @default(Z0)
+  nfse_padrao                                  String?                                            @default("ABRASF") @db.VarChar(20)
+  nfse_senha_acesso                            String?                                            @db.VarChar(100)
+  nfse_url_servico                             String?                                            @db.VarChar(250)
+  nfce_imprime_produtos                        filial_nfce_imprime_produtos?                      @default(N)
+  nfce_id_token                                String?                                            @default("000001") @db.VarChar(6)
+  nfce_csc                                     String?                                            @db.VarChar(100)
+  nfe_id_email_envio_cliente                   Int?
+  nfe_envia_pdf_email                          filial_nfe_envia_pdf_email                         @default(S)
+  nfe_envia_xml_email                          filial_nfe_envia_xml_email                         @default(S)
+  logo_docs                                    String?                                            @db.VarChar(500)
+  enviar_email_suporte                         filial_enviar_email_suporte?                       @default(N)
+  email_suporte                                String?                                            @db.VarChar(255)
+  img_assinatura                               String?                                            @db.VarChar(255)
+  id_rps_modelo_impressao                      Int?
+  id_filial_doc_opcional                       Int?
+  contador_nome                                String?                                            @db.VarChar(100)
+  contador_cnpj                                String?                                            @db.VarChar(30)
+  contador_cpf                                 String?                                            @db.VarChar(15)
+  contador_crc                                 String?                                            @db.VarChar(15)
+  contador_uf                                  String?                                            @db.VarChar(2)
+  contador_cep                                 String?                                            @db.VarChar(20)
+  contador_endereco                            String?                                            @db.VarChar(200)
+  contador_numero                              String?                                            @db.VarChar(20)
+  contador_complemento                         String?                                            @db.VarChar(60)
+  contador_bairro                              String?                                            @db.VarChar(60)
+  contador_telefone                            String?                                            @db.VarChar(20)
+  contador_fax                                 String?                                            @db.VarChar(20)
+  contador_email                               String?                                            @db.VarChar(250)
+  nfse_cod_cidade                              String?                                            @db.VarChar(10)
+  latitude                                     String?                                            @db.VarChar(50)
+  longitude                                    String?                                            @db.VarChar(50)
+  facebook                                     String?                                            @db.VarChar(300)
+  iss_exigibilidade                            Int?
+  cnae_complementar                            String?                                            @db.VarChar(2)
+  id_filial_isss_exig                          Int?
+  nfe_id_envio_email_fornecedor                Int?
+  usuario_nfse                                 String                                             @db.VarChar(100)
+  contador_cidade                              Int?
+  insentivo_fiscal                             Int
+  email_envio_contrato_assinado_filial         String?                                            @db.VarChar(100)
+  envia_email_assinatura_digital_contrato      filial_envia_email_assinatura_digital_contrato?    @default(P)
+  smtp_envio_email_assinatura_contrato_digital Int?
+  certificado_valido                           filial_certificado_valido?
+  cor_mapa                                     String?                                            @db.VarChar(45)
+  envia_anexo_pdf                              filial_envia_anexo_pdf?                            @default(N)
+  id_envio_email_personalizado                 Int?
+  numero_eot                                   String?                                            @db.VarChar(60)
+  id_integracao_serasa                         Int
+  tv_id_regiao                                 Int?
+  id_filial_doc_opc2                           Int?
+  id_filial_doc_opc3                           Int?
+  id_filial_doc_opc4                           Int?
+  identificador_na_febraban                    Int?
+  whatsapp                                     String?                                            @db.VarChar(20)
+  inserir_inf_adic_contrato_descricao_servico  filial_inserir_inf_adic_contrato_descricao_servico @default(N)
+  nfse_client_id                               String?                                            @db.VarChar(255)
+  nfse_client_secret                           String?                                            @db.VarChar(255)
+  id_cnae                                      Int?
+  nfse_aedf                                    String?                                            @db.VarChar(10)
+  nfse_cfps                                    Int?
+  token_rdstation                              String?                                            @db.VarChar(50)
+  id_canal_venda_marketing                     Int?                                               @db.UnsignedInt
+  token                                        String?                                            @db.VarChar(512)
+  permite_conversoes_duplicadas                filial_permite_conversoes_duplicadas               @default(S)
+  integracao_assinatura_digital                Int?                                               @db.UnsignedInt
+  ativo                                        filial_ativo                                       @default(S)
+  importar_dfe_automaticamente                 filial_importar_dfe_automaticamente?               @default(S)
+  nfe_ambiente_62                              filial_nfe_ambiente_62?                            @default(DOIS)
+  regime_fiscal_col                            filial_regime_fiscal_col?
+  tipo_documento_identificacao_col             filial_tipo_documento_identificacao_col?
+  ciiu_col                                     filial_ciiu_col?
+  curl_type                                    String                                             @default("multi") @db.VarChar(10)
+
+  @@index([cidade], map: "filial_ibfk_2")
+  @@index([id_empresa], map: "id_empresa")
+}
+
+model departamento {
+  id                 Int                             @id @default(autoincrement())
+  descricao          String                          @db.VarChar(50)
+  presta_atendimento departamento_presta_atendimento @default(S)
+}
+
+model funcionarios {
+  id                               Int                                           @id @default(autoincrement())
+  funcionario                      String                                        @db.VarChar(100)
+  id_funcao                        Int?
+  id_conta                         Int?
+  coeficiente                      Decimal?                                      @db.Decimal(15, 9)
+  filial_id                        Int
+  fone_celular                     String?                                       @db.VarChar(20)
+  email                            String?                                       @db.VarChar(120)
+  envia_email_os                   funcionarios_envia_email_os                   @default(S)
+  envia_sms_os                     funcionarios_envia_sms_os                     @default(N)
+  integracao_calendario            funcionarios_integracao_calendario            @default(N)
+  id_setor_padrao                  Int?
+  endereco                         String?                                       @db.VarChar(200)
+  cidade                           Int?
+  numero                           String?                                       @db.VarChar(20)
+  bairro                           String?                                       @db.VarChar(100)
+  uf                               Int?
+  cep                              String?                                       @db.VarChar(20)
+  complemento                      String?                                       @db.VarChar(100)
+  referencia                       String?                                       @db.VarChar(100)
+  cpf_cnpj                         String?                                       @db.VarChar(30)
+  ie_identidade                    String?                                       @db.VarChar(30)
+  rg_orgao_emissor                 String?                                       @db.Char(20)
+  nacionalidade                    String?                                       @db.VarChar(30)
+  data_nascimento                  DateTime?                                     @db.Date
+  fone                             String?                                       @db.VarChar(20)
+  telefone_comercial               String?                                       @db.VarChar(20)
+  assinatura_email                 Bytes?                                        @db.Blob
+  id_email_smtp                    Int?
+  ativo                            funcionarios_ativo?                           @default(S)
+  banco                            String?                                       @db.VarChar(11)
+  agencia                          String?                                       @db.VarChar(100)
+  numero_conta_dv                  String?                                       @db.VarChar(3)
+  agencia_dv                       String?                                       @db.VarChar(3)
+  conta                            String?                                       @db.VarChar(20)
+  tipo_recebimento                 funcionarios_tipo_recebimento?
+  pipe_id_usuario                  Int?
+  data_admissao                    DateTime?                                     @db.Date
+  data_demissao                    DateTime?                                     @db.Date
+  obs                              String?                                       @db.Text
+  img_assinatura                   String?                                       @db.VarChar(255)
+  ultima_latitude                  String?                                       @db.VarChar(45)
+  ultima_longitude                 String?                                       @db.VarChar(45)
+  percen_max_desc_areceber         Decimal?                                      @db.Decimal(15, 2)
+  ramal                            Int?
+  envia_telegram_os                funcionarios_envia_telegram_os                @default(N)
+  telegram_chat_id_funcionario     String?                                       @db.VarChar(200)
+  id_chat_telegram_funcionario     Int?
+  cor_mapa                         String?                                       @db.VarChar(45)
+  prj_custo_hora_base              Decimal?                                      @db.Decimal(15, 2)
+  prj_custo_hora_adicionais        Decimal?                                      @db.Decimal(15, 2)
+  camara_centralizadora            String?                                       @db.VarChar(3)
+  id_perfil_jornada_trabalho       Int
+  nome_pai                         String?                                       @db.VarChar(120)
+  nome_mae                         String?                                       @db.VarChar(120)
+  estado_civil                     funcionarios_estado_civil                     @default(S)
+  nome_conjuge                     String?                                       @db.VarChar(120)
+  dependentes_ir                   Int?
+  num_dependentes                  Int?
+  cor_raca                         funcionarios_cor_raca                         @default(B)
+  num_manequim                     Int?
+  camiseta                         funcionarios_camiseta                         @default(M)
+  possui_deficiencia               funcionarios_possui_deficiencia               @default(N)
+  tipo_deficiencia                 funcionarios_tipo_deficiencia?
+  grau_escolaridade                funcionarios_grau_escolaridade?
+  periodo_escolaridade             funcionarios_periodo_escolaridade?
+  estagio_escolaridade             funcionarios_estagio_escolaridade?
+  fone_emergencia                  String?                                       @db.VarChar(20)
+  falar_com                        String?                                       @db.VarChar(60)
+  salario                          Decimal?                                      @db.Decimal(15, 2)
+  cnh_categoria                    String?
+  cnh_numero                       String?                                       @db.VarChar(25)
+  ctps_numero                      String?                                       @db.VarChar(25)
+  ctps_serie                       String?                                       @db.VarChar(10)
+  ctps_data_emissao                DateTime?                                     @db.Date
+  ctps_cidade_emissao              Int?
+  titulo_numero                    String?                                       @db.VarChar(20)
+  titulo_zona                      String?                                       @db.VarChar(5)
+  titulo_secao                     String?                                       @db.VarChar(5)
+  cnh_vencimento                   DateTime?                                     @db.Date
+  rg_conjuge                       String?                                       @db.VarChar(30)
+  cpf_conjuge                      String?                                       @db.VarChar(30)
+  pis_numero                       String?                                       @db.VarChar(20)
+  pis_data                         DateTime?                                     @db.Date
+  rg_data_emissao                  DateTime?                                     @db.Date
+  dep_um_nome                      String?                                       @db.VarChar(120)
+  dep_um_rg                        String?                                       @db.VarChar(20)
+  dep_um_cpf                       String?                                       @db.VarChar(20)
+  dep_dois_nome                    String?                                       @db.VarChar(120)
+  dep_dois_rg                      String?                                       @db.VarChar(20)
+  dep_dois_cpf                     String?                                       @db.VarChar(20)
+  dep_tres_nome                    String?                                       @db.VarChar(120)
+  dep_tres_rg                      String?                                       @db.VarChar(20)
+  dep_tres_cpf                     String?                                       @db.VarChar(20)
+  id_departamento                  Int?
+  rastreador                       String?                                       @db.VarChar(50)
+  last_location_update             DateTime?                                     @db.Timestamp(0)
+  ultima_atualizacao               DateTime?                                     @default(now()) @db.Timestamp(0)
+  id_conta_salario                 Int?
+  cod_integracao_folha             Int?
+  gps_time                         DateTime?                                     @db.DateTime(0)
+  ferias_colaborador               funcionarios_ferias_colaborador               @default(N)
+  exibir_colaborador_inmap         funcionarios_exibir_colaborador_inmap         @default(S)
+  id_conta_decimo                  Int?                                          @db.UnsignedInt
+  chave_pix                        String?                                       @db.VarChar(120)
+  tipo_chave_pix                   funcionarios_tipo_chave_pix?
+  mostrar_no_quadro_kanban         funcionarios_mostrar_no_quadro_kanban         @default(S)
+  rastreador_tipo                  funcionarios_rastreador_tipo                  @default(S)
+  maximo_os_dia                    Int?                                          @db.UnsignedInt
+  vinculo_config_roteirizacao      funcionarios_vinculo_config_roteirizacao      @default(N)
+  tipo_documento_identificacao_col funcionarios_tipo_documento_identificacao_col @default(UU13)
+
+  @@index([cidade], map: "cidade")
+  @@index([filial_id], map: "filial_id")
+  @@index([id_conta_salario], map: "id_conta_salario")
+  @@index([id_funcao], map: "id_funcao")
+  @@index([id_setor_padrao], map: "id_setor_padrao")
+}
+
+model su_oss_respostas {
+  id                        Int                                  @id @default(autoincrement())
+  resposta                  String                               @db.Text
+  titulo                    String?                              @db.TinyText
+  interacao_pendente        su_oss_respostas_interacao_pendente? @default(I)
+  su_status                 su_oss_respostas_su_status?          @default(N)
+  id_evento_status_processo Int?
+  setor                     Int?                                 @db.UnsignedInt
+  ativo                     su_oss_respostas_ativo?              @default(S)
+}
+
+model su_evento_status {
+  id        Int    @id @default(autoincrement())
+  descricao String @db.VarChar(100)
+}
+
+model su_canal_atendimento {
+  id                Int     @id @default(autoincrement())
+  canal_atendimento String  @db.VarChar(200)
+  descricao         String? @db.Text
+}
+
+model wfl_processo {
+  id                          Int                @id @default(autoincrement())
+  descricao                   String             @db.VarChar(200)
+  ativo                       wfl_processo_ativo @default(S)
+  id_depto                    Int?
+  ultima_atualizacao          DateTime?          @default(now()) @db.Timestamp(0)
+  operador_ultima_atualizacao Int?
+
+  @@index([id_depto], map: "id_depto")
+  @@index([ultima_atualizacao], map: "ultima_atualizacao")
+}
+
+
 enum cliente_tipo_pessoa {
   J
   F
@@ -906,6 +1253,379 @@ enum su_oss_assunto_exige_produto_finalizar_os {
 }
 
 enum su_oss_assunto_conceder_desconto_login_regiao_manutencao {
+  S
+  N
+}
+
+enum su_ticket_prioridade {
+  B
+  M
+  A
+  C
+}
+
+enum su_ticket_id_ticket_origem {
+  I
+  H
+  A
+}
+
+enum su_ticket_status_enum {
+  T
+  C
+  F
+  EX
+  OSAB
+  OSAG
+  OSEX
+}
+
+enum su_ticket_origem_endereco {
+  C
+  L
+  CC
+  M
+}
+
+enum su_ticket_su_status {
+  N
+  P
+  EP
+  S
+  C
+}
+
+enum su_ticket_interacao_pendente {
+  E
+  I
+  N
+  A
+}
+
+enum su_ticket_melhor_horario_agenda {
+  M
+  T
+  N
+  Q
+}
+
+enum su_ticket_melhor_horario_reserva {
+  M
+  T
+  N
+  Q
+}
+
+enum su_ticket_origem_cadastro {
+  P
+  SV
+}
+
+enum su_ticket_tipo {
+  C
+  E
+}
+
+enum su_ticket_origem_endereco_estrutura {
+  E
+  M
+}
+
+enum filial_rt {
+  UM                   @map("1")
+  DOIS                 @map("2")
+  TRES                 @map("3")
+  ZERO_A_TREZE         @map("0-13")
+  ZERO_A_QUINZE        @map("0-15")
+  ZERO_A_VINTE_TRES    @map("0-23")
+  ZERO_A_QUARENTA_SETE @map("0-47")
+  R_99_PN              @map("R-99-PN")
+}
+
+enum filial_nfe_ambiente {
+  U1 @map("1")
+  D2 @map("2")
+}
+
+enum filial_nfe_formato_imp {
+  P
+  L
+}
+
+enum filial_nfe_canhoto {
+  S
+  N
+}
+
+enum filial_tipo_pessoa {
+  J
+  F
+  UM   @map("1")
+  DOIS @map("2")
+}
+
+enum filial_insentivo_cultural {
+  Z0 @map("0")
+  U1 @map("1")
+}
+
+enum filial_opcao_simples {
+  Z0 @map("0")
+  U1 @map("1")
+}
+
+enum filial_nfce_imprime_produtos {
+  S
+  N
+}
+
+enum filial_nfe_envia_pdf_email {
+  S
+  N
+}
+
+enum filial_nfe_envia_xml_email {
+  S
+  N
+}
+
+enum filial_enviar_email_suporte {
+  S
+  N
+}
+
+enum filial_envia_email_assinatura_digital_contrato {
+  S
+  N
+  P
+}
+
+enum filial_certificado_valido {
+  S
+  N
+}
+
+enum filial_envia_anexo_pdf {
+  S
+  N
+}
+
+enum filial_inserir_inf_adic_contrato_descricao_servico {
+  S
+  N
+}
+
+enum filial_permite_conversoes_duplicadas {
+  S
+  N
+}
+
+enum filial_ativo {
+  S
+  N
+}
+
+enum filial_importar_dfe_automaticamente {
+  S
+  N
+}
+
+enum filial_nfe_ambiente_62 {
+  UM   @map("1")
+  DOIS @map("2")
+}
+
+enum filial_regime_fiscal_col {
+  UU48 @map("48")
+  UU49 @map("49")
+}
+
+enum filial_tipo_documento_identificacao_col {
+  UU11 @map("11")
+  UU12 @map("12")
+  UU13 @map("13")
+  UU21 @map("21")
+  UU22 @map("22")
+  UU31 @map("31")
+  UU41 @map("41")
+  UU42 @map("42")
+  UU47 @map("47")
+  UU50 @map("50")
+  UU91 @map("91")
+}
+
+enum filial_ciiu_col {
+  C6110 @map("6110")
+  C6120 @map("6120")
+  C6130 @map("6130")
+  C6190 @map("6190")
+}
+
+enum departamento_presta_atendimento {
+  S
+  N
+}
+
+enum funcionarios_envia_email_os {
+  S
+  N
+}
+
+enum funcionarios_envia_sms_os {
+  S
+  N
+}
+
+enum funcionarios_integracao_calendario {
+  S
+  N
+}
+
+enum funcionarios_ativo {
+  S
+  N
+}
+
+enum funcionarios_tipo_recebimento {
+  C
+  B
+  D
+}
+
+enum funcionarios_envia_telegram_os {
+  S
+  N
+}
+
+enum funcionarios_estado_civil {
+  S
+  C
+  UE
+  D
+  V
+  SE
+}
+
+enum funcionarios_cor_raca {
+  A
+  B
+  I
+  P
+  N
+  O
+}
+
+enum funcionarios_camiseta {
+  P
+  PP
+  M
+  G
+  GG
+  O
+}
+
+enum funcionarios_possui_deficiencia {
+  S
+  N
+}
+
+enum funcionarios_tipo_deficiencia {
+  F
+  A
+  V
+  M
+  MR
+}
+
+enum funcionarios_grau_escolaridade {
+  EF
+  EM
+  ES
+  PG
+  M
+  D
+}
+
+enum funcionarios_periodo_escolaridade {
+  M
+  V
+  N
+}
+
+enum funcionarios_estagio_escolaridade {
+  C
+  CR
+  I
+}
+
+enum funcionarios_ferias_colaborador {
+  S
+  N
+}
+
+enum funcionarios_exibir_colaborador_inmap {
+  S
+  N
+}
+
+enum funcionarios_tipo_chave_pix {
+  cpf_cnpj
+  celular
+  email
+  aleatoria
+  codigo_copia_cola
+}
+
+enum funcionarios_mostrar_no_quadro_kanban {
+  S
+  N
+}
+
+enum funcionarios_rastreador_tipo {
+  S
+  N
+}
+
+enum funcionarios_vinculo_config_roteirizacao {
+  S
+  N
+}
+
+enum funcionarios_tipo_documento_identificacao_col {
+  UU11 @map("11")
+  UU12 @map("12")
+  UU13 @map("13")
+  UU21 @map("21")
+  UU22 @map("22")
+  UU31 @map("31")
+  UU41 @map("41")
+  UU42 @map("42")
+  UU47 @map("47")
+  UU50 @map("50")
+  UU91 @map("91")
+}
+
+enum su_oss_respostas_interacao_pendente {
+  E
+  I
+  N
+  A
+}
+
+enum su_oss_respostas_su_status {
+  N
+  P
+  EP
+  S
+  C
+}
+
+enum su_oss_respostas_ativo {
+  S
+  N
+}
+
+enum wfl_processo_ativo {
   S
   N
 }
