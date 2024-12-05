@@ -11,8 +11,8 @@ export async function POST(req: Request) {
   const param = {
     "tipo": "C",
     "id_cliente": body.id_cliente,
-    "id_assunto": body.assuntoID,
-    "titulo": "Teste API",
+    "id_assunto": body.id_assunto,
+    "titulo": body.titulo,
     "id_ticket_setor": "5",
     "prioridade": body.prioridade,
     "menssagem": body.menssagem,

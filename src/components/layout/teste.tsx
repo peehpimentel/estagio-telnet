@@ -1,6 +1,6 @@
 "use client";
 
-import { SetStateAction, useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import AutocompleteInput from '../common/AutoCompleteInput';
 import { TextInput, Button, Datepicker } from "flowbite-react";
 import RadioGroupPrioridade from '../common/RadioGroupPrioridade';
@@ -12,6 +12,10 @@ import RadioGroupTipo from '../common/RadioGroupTipo';
 interface Option {
   id: number;
   name: string;
+  message?: string,
+  street?: string,
+  lat?: string,
+  long?: string,
 }
 
 interface TesteFormProps {
@@ -20,11 +24,17 @@ interface TesteFormProps {
   filialData: Option[];
   departamentoData: Option[];
   funcionariosData: Option[];
+  respostaData: Option[];
+  atendimentoData: Option[];
+  statusData: Option[];
   clientesError: boolean;
   assuntoError: boolean;
   filialError: boolean;
   departamentoError: boolean;
   funcionariosError: boolean;
+  respostaError: boolean;
+  atendimentoError: boolean;
+  statusError: boolean;
 }
 
 export default function TesteForm({
@@ -33,26 +43,40 @@ export default function TesteForm({
   filialData,
   departamentoData,
   funcionariosData,
+  respostaData,
+  atendimentoData,
+  statusData,
   clientesError,
   assuntoError,
   filialError,
   departamentoError,
   funcionariosError,
+  respostaError,
+  atendimentoError,
+  statusError,
+
 }: TesteFormProps) {
   const [cliente, setCliente] = useState<Option | null>(null);
   const [assunto, setAssunto] = useState<Option | null>(null);
   const [filial, setFilial] = useState<Option | null>(null);
   const [departamento, setDepartamento] = useState<Option | null>(null);
   const [funcionarios, setFuncionarios] = useState<Option | null>(null);
+  const [resposta, setResposta] = useState<Option | null>(null);
+  const [atendimento, setAtendimento] = useState<Option | null>(null);
+  const [status, setStatus] = useState<Option | null>(null);
+
   const [prioridade, setPrioridade] = useState<string>(''); 
   const [horario, setHorario] = useState<string>(''); 
   const [origem, setOrigem] = useState<string>(''); 
   const [tipo, setTipo] = useState<string>(''); 
-  const [endereco, setEndereco] = useState<string>(''); 
+  const [enderecoOrigem, setEnderecoOrigem] = useState<string>(''); 
   const [menssagem, setMenssagem] = useState<string>('');
+
   const [isLoading, setIsLoading] = useState(false);
+
   const [selectedValue, setSelectedValue] = useState('N');
 
+  // seleciona por padrão o valor "Nenhuma" do campo "Interação pendente"
   const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSelectedValue(event.target.value);
   };
@@ -83,7 +107,7 @@ export default function TesteForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!cliente || !assunto || !filial || !departamento) {
+    if (!cliente || !assunto || !filial || !resposta) {
       alert('Preencha todos os campos antes de enviar.');
       return;
     }
@@ -91,14 +115,12 @@ export default function TesteForm({
     const payload = {
       "id_cliente": cliente.id,
       "id_assunto": assunto.id,
-      "id_filial": filial.id,
       "prioridade": prioridade,
-      "menssagem": menssagem,
+      "menssagem": resposta.message,
       "tipo": "C",
-      "titulo": "Teste API",
+      "titulo": assunto.name,
       "id_ticket_setor": "5",
       "su_status": "N",
-      "origem_endereco": endereco
     };  
 
     setIsLoading(true);
@@ -200,13 +222,13 @@ export default function TesteForm({
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Origem do endereço: </label>
         <div className="col-span-2">
           <RadioGroupEndereco
-            value={endereco}
-            onChange={setPrioridade} 
+            value={enderecoOrigem}
+            onChange={setEnderecoOrigem} 
           />
         </div>  
       </div>
 
-      {/* <div className="grid grid-cols-3 items-center gap-5">
+       <div className="grid grid-cols-3 items-center gap-5">
         <label
           htmlFor="endereco"
           className="text-md font-medium text-gray-300 
@@ -214,24 +236,28 @@ export default function TesteForm({
         >Endereço: </label>
       <div className="col-span-2 flex">
         <input
+          value={cliente?.street || ''}
+          onChange={(e) => setCliente({ ...cliente, street: e.target.value } as Option)}
           id="endereco"
           type="text"
           className="flex-grow rounded-l-lg bg-gray-800 text-gray-200 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <Button
-          color="blue"
-          className="rounded-l-none px-0 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none whitespace-nowrap"
-        >Marcar coordenadas</Button>
+        <button
+          type="button"
+          // value={cliente?.lat && cliente?.long || ''}
+          onClick={() => setCliente( {...cliente, lat: cliente?.lat, long: cliente?.long} as Option)}
+          className="rounded-l-none rounded-r-lg px-5 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none whitespace-nowrap"
+        >Marcar coordenadas</button>
       </div>
     </div>
-
+      
         <div className="mt-1.5 mb-1.5 grid grid-cols-3 items-center gap-5">      
           <label htmlFor="latitude" 
           className="text-md font-medium text-gray-300 
           whitespace-nowrap justify-self-end text-right">Latitude: 
           </label>
           <div className="col-span-2">
-            <TextInput className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
+            <TextInput value={cliente?.lat || ''} className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
           </div>
         </div>
 
@@ -239,9 +265,9 @@ export default function TesteForm({
           <label htmlFor="longitude" 
           className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Longitude: </label>
           <div className="col-span-2">
-            <TextInput className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
+            <TextInput value={cliente?.long || ''} className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
           </div>
-        </div> */}
+        </div> 
 
         <div className="grid grid-cols-3 items-center gap-5">      
           <label htmlFor="processo" 
@@ -288,7 +314,7 @@ export default function TesteForm({
         <div className="col-span-2">
           <RadioGroupPrioridade 
           value={prioridade}
-          onChange={setEndereco} 
+          onChange={setPrioridade} 
           />
         </div> 
       </div>
@@ -329,10 +355,10 @@ export default function TesteForm({
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Resposta padrão: </label>
         <div className="col-span-2">
           <AutocompleteInput
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
+          initialData={respostaData}
+          hasError={respostaError}
+          onChange={(value) => setResposta(value)} 
+          value={resposta?.name || ''} 
           />
         </div>
       </div>
@@ -340,14 +366,14 @@ export default function TesteForm({
         <label htmlFor="descricao-mensagem" 
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Descrição: </label>
         <div className="col-span-2">
-          <textarea
-            value={menssagem}
-            onChange={(e) => setMenssagem(e.target.value)}
-            rows={4}
-            maxLength={2147483647}
-            cols={100}
-            className="w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200"
-          />
+        <textarea
+          value={resposta?.message || ''}
+          onChange={(e) => setResposta({ name: e.target.value } as Option)}
+          rows={4}
+          maxLength={2147483647}
+          cols={100}
+          className="w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200"
+        />
         </div>
       </div>
       <div className="grid grid-cols-3 items-center gap-5">      
@@ -391,10 +417,10 @@ export default function TesteForm({
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Status complementar: </label>
         <div className="col-span-2">
           <AutocompleteInput
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
+          initialData={statusData}
+          hasError={statusError}
+          onChange={(value) => setStatus(value)} 
+          value={status?.name || ''} 
           />
         </div>
       </div>
@@ -404,10 +430,10 @@ export default function TesteForm({
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Canal de atendimento: </label>
         <div className="col-span-2">
           <AutocompleteInput
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
+          initialData={atendimentoData}
+          hasError={atendimentoError}
+          onChange={(value) => setAtendimento(value)} 
+          value={atendimento?.name || ''} 
           />
         </div>
       </div>

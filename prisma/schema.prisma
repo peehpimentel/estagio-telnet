@@ -674,7 +674,7 @@ model funcionarios {
 model su_oss_respostas {
   id                        Int                                  @id @default(autoincrement())
   resposta                  String                               @db.Text
-  titulo                    String?                              @db.TinyText
+  titulo                    String                              @db.TinyText
   interacao_pendente        su_oss_respostas_interacao_pendente? @default(I)
   su_status                 su_oss_respostas_su_status?          @default(N)
   id_evento_status_processo Int?

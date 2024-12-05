@@ -10,12 +10,18 @@ async function getClientes() {
       select: {
         id: true,
         razao: true,
+        endereco: true,
+        latitude: true,
+        longitude: true,
       },
     });
     return {
       data: clientes.map(cliente => ({
         id: cliente.id,
-        name: cliente.razao
+        name: cliente.razao,
+        street: cliente.endereco,
+        lat: cliente.latitude,
+        long: cliente.longitude
       })),
       error: false
     };
@@ -123,9 +129,88 @@ async function getFuncionarios() {
     };
   }
 }
+
+async function getResposta() {
+  try {
+    const resposta = await prisma.su_oss_respostas.findMany({
+      select: {
+        id: true,
+        titulo: true,
+        resposta: true,
+      },
+    });
+    return {
+      data: resposta.map(resposta => ({
+        id: resposta.id,
+        name: resposta.titulo,
+        message: resposta.resposta,
+      })),
+      error: false
+    };
+  } catch (error) {
+    console.error('Erro ao buscar respostas:', error);
+    return {
+      data: [],
+      error: true
+    };
+  }
+}
+
+async function getStatus() {
+  try {
+    const status = await prisma.su_evento_status.findMany({
+      select: {
+        id: true,
+        descricao: true,
+      },
+    });
+    return {
+      data: status.map(status => ({
+        id: status.id,
+        name: status.descricao,
+      })),
+      error: false
+    };
+  } catch (error) {
+    console.error('Erro ao buscar status:', error);
+    return {
+      data: [],
+      error: true
+    };
+  }
+}
+
+async function getAtendimento() {
+  try {
+    const atendimento = await prisma.su_canal_atendimento.findMany({
+      select: {
+        id: true,
+        canal_atendimento: true,
+      },
+    });
+    return {
+      data: atendimento.map(atendimento => ({
+        id: atendimento.id,
+        name: atendimento.canal_atendimento,
+      })),
+      error: false
+    };
+  } catch (error) {
+    console.error('Erro ao buscar o canal de atendimento:', error);
+    return {
+      data: [],
+      error: true
+    };
+  }
+}
+
 interface Option {
-  id: number,
-  name: string,
+  id: number;
+  name: string;
+  message?: string,
+  street?: string,
+  lat?: string,
+  long?: string,
 }
 
 interface TesteFormProps {
@@ -134,21 +219,39 @@ interface TesteFormProps {
   filialData: Option[];
   departamentoData: Option[];
   funcionariosData: Option[];
+  respostaData: Option[];
+  atendimentoData: Option[];
+  statusData: Option[];
   clientesError: boolean;
   assuntoError: boolean;
   filialError: boolean;
   departamentoError: boolean;
   funcionariosError: boolean;
+  respostaError: boolean;
+  atendimentoError: boolean;
+  statusError: boolean;
 }
 
 export default async function TestePage() {
 
-  const [clientesResponse, assuntosResponse, filialResponse, departamentoResponse, funcionariosResponse] = await Promise.all([
+  const [
+    clientesResponse, 
+    assuntosResponse, 
+    filialResponse, 
+    departamentoResponse, 
+    funcionariosResponse, 
+    respostaResponse, 
+    atendimentoResponse, 
+    statusResponse,
+  ] = await Promise.all([
     getClientes(),
     getAssunto(),
     getFilial(),
     getDepartamento(),
     getFuncionarios(),
+    getResposta(),
+    getAtendimento(),
+    getStatus(),
   ]);
 
   const { data: clientesData, error: clientesError } = clientesResponse;
@@ -156,6 +259,9 @@ export default async function TestePage() {
   const { data: filialData, error: filialError } = filialResponse;
   const { data: departamentoData, error: departamentoError } = departamentoResponse;
   const { data: funcionariosData, error: funcionariosError } = funcionariosResponse;
+  const { data: respostaData, error: respostaError } = respostaResponse;
+  const { data: atendimentoData, error: atendimentoError } = atendimentoResponse;
+  const { data: statusData, error: statusError } = statusResponse;
 
   const formData: TesteFormProps = {
     clientesData,
@@ -163,11 +269,17 @@ export default async function TestePage() {
     filialData,
     departamentoData,
     funcionariosData,
+    respostaData,
+    atendimentoData,
+    statusData,
     clientesError,
     assuntoError,
     filialError,
     departamentoError,
     funcionariosError,
+    respostaError,
+    atendimentoError,
+    statusError,
   };
 
   return (
