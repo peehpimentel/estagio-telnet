@@ -14,8 +14,13 @@ interface Option {
   name: string;
   message?: string,
   street?: string,
+  streetNumber?: string,
+  neighborhood?: string,
+  cep?: string,
   lat?: string,
   long?: string,
+  city?: string,
+  state?: string,
 }
 
 interface TesteFormProps {
@@ -75,6 +80,7 @@ export default function TesteForm({
   const [isLoading, setIsLoading] = useState(false);
 
   const [selectedValue, setSelectedValue] = useState('N');
+  const [coordenadas, setCoordenadas] = useState({ lat: "", long: "" });
 
   // seleciona por padrão o valor "Nenhuma" do campo "Interação pendente"
   const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
@@ -236,18 +242,34 @@ export default function TesteForm({
         >Endereço: </label>
       <div className="col-span-2 flex">
         <input
-          value={cliente?.street || ''}
-          onChange={(e) => setCliente({ ...cliente, street: e.target.value } as Option)}
+          value={`${cliente?.street || ''}, ${cliente?.streetNumber || ''} - ${cliente?.neighborhood || ''}, ${cliente?.city} - ${cliente?.state} ${cliente?.cep || ''}`}
+          onChange={(e) => {
+            const [street, streetNumber, neighborhood] = e.target.value.split(', '); // Divide os valores por vírgula e espaço
+            setCliente({
+              ...cliente,
+              street: street || '', // Atualiza o valor de street
+              streetNumber: streetNumber || '',     // Atualiza o valor de city
+              neighborhood: neighborhood || '',   // Atualiza o valor de state
+            } as Option);
+          }}
           id="endereco"
           type="text"
           className="flex-grow rounded-l-lg bg-gray-800 text-gray-200 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button
-          type="button"
-          // value={cliente?.lat && cliente?.long || ''}
-          onClick={() => setCliente( {...cliente, lat: cliente?.lat, long: cliente?.long} as Option)}
-          className="rounded-l-none rounded-r-lg px-5 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none whitespace-nowrap"
-        >Marcar coordenadas</button>
+          <button
+            type="button"
+            onClick={() => {
+              // Atualiza o estado de coordenadas apenas ao clicar
+              if (cliente?.lat && cliente?.long) {
+                setCoordenadas({ lat: cliente.lat, long: cliente.long });
+              } else {
+                alert("As coordenadas não estão disponíveis para este cliente.");
+              }
+            }}
+            className="rounded-l-none rounded-r-lg px-5 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none whitespace-nowrap"
+          >
+            Marcar coordenadas
+          </button>
       </div>
     </div>
       
@@ -257,7 +279,7 @@ export default function TesteForm({
           whitespace-nowrap justify-self-end text-right">Latitude: 
           </label>
           <div className="col-span-2">
-            <TextInput value={cliente?.lat || ''} className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
+            <TextInput value={coordenadas.lat} className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
           </div>
         </div>
 
@@ -265,7 +287,7 @@ export default function TesteForm({
           <label htmlFor="longitude" 
           className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Longitude: </label>
           <div className="col-span-2">
-            <TextInput value={cliente?.long || ''} className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
+            <TextInput value={coordenadas.long} className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
           </div>
         </div> 
 

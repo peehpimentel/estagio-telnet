@@ -11,8 +11,21 @@ async function getClientes() {
         id: true,
         razao: true,
         endereco: true,
+        numero: true,
+        bairro: true,
+        cep: true,
         latitude: true,
         longitude: true,
+        cidadeID: {
+          select: {
+            nome: true,
+            ufID: {
+              select: {
+                sigla: true,
+              }
+            }
+          },
+        },
       },
     });
     return {
@@ -20,8 +33,13 @@ async function getClientes() {
         id: cliente.id,
         name: cliente.razao,
         street: cliente.endereco,
+        streetNumber: cliente.numero,
+        neighborhood: cliente.bairro,
+        cep: cliente.cep,
         lat: cliente.latitude,
-        long: cliente.longitude
+        long: cliente.longitude,
+        city: cliente.cidadeID?.nome,
+        state: cliente.cidadeID?.uf?.sigla
       })),
       error: false
     };
@@ -209,8 +227,13 @@ interface Option {
   name: string;
   message?: string,
   street?: string,
+  streetNumber?: string,
+  neighborhood?: string,
+  cep?: string,
   lat?: string,
   long?: string,
+  city?: string,
+  state?: string,
 }
 
 interface TesteFormProps {

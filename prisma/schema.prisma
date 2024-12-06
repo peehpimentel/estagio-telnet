@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -16,6 +17,7 @@ model cliente {
   numero                           String?                                   @db.VarChar(20)
   bairro                           String?                                   @db.VarChar(100)
   cidade                           Int?
+  cidadeID                         cidade?                                   @relation(fields: [cidade], references: [id])  
   uf                               Int?
   cnpj_cpf                         String?                                   @db.VarChar(30)
   ie_identidade                    String?                                   @db.VarChar(30)
@@ -705,6 +707,41 @@ model wfl_processo {
   @@index([ultima_atualizacao], map: "ultima_atualizacao")
 }
 
+model cidade {
+  id                              Int           @id @default(autoincrement())
+  nome                            String        @db.VarChar(100)
+  uf                              Int
+  ufID                            uf?                                       @relation(fields: [uf], references: [id])  
+  regiao                          String?       @db.VarChar(100)
+  cod_ibge                        Int?          @default(0) @db.UnsignedInt
+  cod_siafi                       String?       @db.VarChar(10)
+  latitude                        String?       @db.VarChar(30)
+  longitude                       String?       @db.VarChar(30)
+  cod_cidade_nfse_forquilhinha_sc Int?
+  origem                          cidade_origem @default(N)
+  api_id                          Int?          @unique(map: "api_id") @db.UnsignedInt
+  clientes                        cliente[]
+
+  @@index([cod_ibge], map: "cod_ibge")
+  @@index([uf], map: "uf")
+}
+
+model uf {
+  id        Int     @id @default(autoincrement())
+  nome      String  @db.VarChar(100)
+  sigla     String @db.VarChar(5)
+  cod_uf    String? @db.VarChar(3)
+  regiao    String? @db.VarChar(2)
+  id_pais   Int
+  cod_ibge  Int?
+  latitude  String? @db.VarChar(30)
+  longitude String? @db.VarChar(30)
+  api_id    Int?    @unique(map: "api_id") @db.UnsignedInt
+  cidades           cidade[]
+  
+  @@index([cod_ibge], map: "cod_ibge")
+  @@index([id_pais], map: "id_pais")
+}
 
 enum cliente_tipo_pessoa {
   J
@@ -1628,4 +1665,9 @@ enum su_oss_respostas_ativo {
 enum wfl_processo_ativo {
   S
   N
+}
+
+enum cidade_origem {
+  N
+  I
 }
