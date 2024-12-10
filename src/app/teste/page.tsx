@@ -39,7 +39,7 @@ async function getClientes() {
         lat: cliente.latitude,
         long: cliente.longitude,
         city: cliente.cidadeID?.nome,
-        state: cliente.cidadeID?.uf?.sigla
+        state: cliente.cidadeID?.ufID?.sigla
       })),
       error: false
     };

@@ -12,13 +12,13 @@ interface RadioGroupPrioridadeProps {
      <fieldset className=" text-gray-200 px-4 py-2 
      rounded focus:outline-none focus:border-blue-500">
         <div className="flex items-center space-x-2">
-            <RadioGroupItem value="b" id="r1" />
+            <RadioGroupItem value="b" id="r1" name="priority-group"/>
             <Label htmlFor="r1">Baixa</Label>
-            <RadioGroupItem value="n" id="r2" />
+            <RadioGroupItem value="n" id="r2" name="priority-group"/>
             <Label htmlFor="r2">Normal</Label>
-            <RadioGroupItem value="a" id="r3" />
+            <RadioGroupItem value="a" id="r3" name="priority-group"/>
             <Label htmlFor="r3">Alta</Label>
-            <RadioGroupItem value="c" id="r4" />
+            <RadioGroupItem value="c" id="r4" name="priority-group"/>
             <Label htmlFor="r4">Crítica</Label>
         </div>
     </fieldset>

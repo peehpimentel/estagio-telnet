@@ -12,9 +12,9 @@ interface RadioGroupTipoProps {
      <fieldset className=" text-gray-200 px-4 py-2 
      rounded focus:outline-none focus:border-blue-500">
         <div className="flex items-center space-x-2">
-            <RadioGroupItem value="c" id="r1"/>
+            <RadioGroupItem value="c" id="r1" name="type-group"/>
             <Label htmlFor="r1">Cliente</Label>
-            <RadioGroupItem value="e" id="r2"/>
+            <RadioGroupItem value="e" id="r2" name="type-group"/>
             <Label htmlFor="r2">Estrutura própria</Label>
         </div>
     </fieldset>
