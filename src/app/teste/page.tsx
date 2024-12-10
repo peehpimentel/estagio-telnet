@@ -102,16 +102,16 @@ async function getFilial() {
 
 async function getDepartamento() {
   try {
-    const departamento = await prisma.departamento.findMany({
+    const departamento = await prisma.su_ticket_setor.findMany({
       select: {
         id: true,
-        descricao: true,
+        setor: true,
       },
     });
     return {
-      data: departamento.map(departamento => ({
-        id: departamento.id,
-        name: departamento.descricao
+      data: departamento.map(su_ticket_setor => ({
+        id: su_ticket_setor.id,
+        name: su_ticket_setor.setor
       })),
       error: false
     };
@@ -222,6 +222,30 @@ async function getAtendimento() {
   }
 }
 
+async function getProcesso() {
+  try {
+    const processo = await prisma.wfl_processo.findMany({
+      select: {
+        id: true,
+        descricao: true,
+      },
+    });
+    return {
+      data: processo.map(processo => ({
+        id: processo.id,
+        name: processo.descricao,
+      })),
+      error: false
+    };
+  } catch (error) {
+    console.error('Erro ao buscar o tipo de processo:', error);
+    return {
+      data: [],
+      error: true
+    };
+  }
+}
+
 interface Option {
   id: number;
   name: string;
@@ -234,6 +258,7 @@ interface Option {
   long?: string,
   city?: string,
   state?: string,
+  date?: Date,
 }
 
 interface TesteFormProps {
@@ -245,6 +270,7 @@ interface TesteFormProps {
   respostaData: Option[];
   atendimentoData: Option[];
   statusData: Option[];
+  processoData: Option[];
   clientesError: boolean;
   assuntoError: boolean;
   filialError: boolean;
@@ -253,6 +279,7 @@ interface TesteFormProps {
   respostaError: boolean;
   atendimentoError: boolean;
   statusError: boolean;
+  processoError: boolean;
 }
 
 export default async function TestePage() {
@@ -266,6 +293,7 @@ export default async function TestePage() {
     respostaResponse, 
     atendimentoResponse, 
     statusResponse,
+    processoResponse,
   ] = await Promise.all([
     getClientes(),
     getAssunto(),
@@ -275,6 +303,7 @@ export default async function TestePage() {
     getResposta(),
     getAtendimento(),
     getStatus(),
+    getProcesso(),
   ]);
 
   const { data: clientesData, error: clientesError } = clientesResponse;
@@ -285,6 +314,7 @@ export default async function TestePage() {
   const { data: respostaData, error: respostaError } = respostaResponse;
   const { data: atendimentoData, error: atendimentoError } = atendimentoResponse;
   const { data: statusData, error: statusError } = statusResponse;
+  const { data: processoData, error: processoError } = processoResponse;
 
   const formData: TesteFormProps = {
     clientesData,
@@ -295,6 +325,7 @@ export default async function TestePage() {
     respostaData,
     atendimentoData,
     statusData,
+    processoData,
     clientesError,
     assuntoError,
     filialError,
@@ -303,6 +334,7 @@ export default async function TestePage() {
     respostaError,
     atendimentoError,
     statusError,
+    processoError,
   };
 
   return (

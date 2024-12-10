@@ -743,6 +743,18 @@ model uf {
   @@index([id_pais], map: "id_pais")
 }
 
+model su_ticket_setor {
+  id                    Int                                   @id @default(autoincrement())
+  setor                 String                                @db.VarChar(200)
+  email                 String?                               @db.Text
+  presta_atendimento    su_ticket_setor_presta_atendimento    @default(S)
+  exige_vinculo_produto su_ticket_setor_exige_vinculo_produto @default(N)
+  ordem                 Int?                                  @default(10)
+  ativo                 su_ticket_setor_ativo                 @default(S)
+  mostra_hotsite        su_ticket_setor_mostra_hotsite        @default(S)
+}
+
+
 enum cliente_tipo_pessoa {
   J
   F
@@ -1671,3 +1683,24 @@ enum cidade_origem {
   N
   I
 }
+
+enum su_ticket_setor_presta_atendimento {
+  S
+  N
+}
+
+enum su_ticket_setor_exige_vinculo_produto {
+  S
+  N
+}
+
+enum su_ticket_setor_ativo {
+  S
+  N
+}
+
+enum su_ticket_setor_mostra_hotsite {
+  S
+  N
+}
+

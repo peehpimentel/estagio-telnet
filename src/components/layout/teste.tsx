@@ -21,6 +21,7 @@ interface Option {
   long?: string,
   city?: string,
   state?: string,
+  date?: Date;
 }
 
 interface TesteFormProps {
@@ -32,6 +33,7 @@ interface TesteFormProps {
   respostaData: Option[];
   atendimentoData: Option[];
   statusData: Option[];
+  processoData: Option[];
   clientesError: boolean;
   assuntoError: boolean;
   filialError: boolean;
@@ -40,6 +42,7 @@ interface TesteFormProps {
   respostaError: boolean;
   atendimentoError: boolean;
   statusError: boolean;
+  processoError: boolean;
 }
 
 export default function TesteForm({
@@ -51,6 +54,7 @@ export default function TesteForm({
   respostaData,
   atendimentoData,
   statusData,
+  processoData,
   clientesError,
   assuntoError,
   filialError,
@@ -59,6 +63,7 @@ export default function TesteForm({
   respostaError,
   atendimentoError,
   statusError,
+  processoError,
 
 }: TesteFormProps) {
   const [cliente, setCliente] = useState<Option | null>(null);
@@ -69,6 +74,7 @@ export default function TesteForm({
   const [resposta, setResposta] = useState<Option | null>(null);
   const [atendimento, setAtendimento] = useState<Option | null>(null);
   const [status, setStatus] = useState<Option | null>(null);
+  const [processo, setProcesso] = useState<Option | null>(null);
 
   const [prioridade, setPrioridade] = useState<string>(''); 
   const [horario, setHorario] = useState<string>(''); 
@@ -76,12 +82,13 @@ export default function TesteForm({
   const [tipo, setTipo] = useState<string>(''); 
   const [enderecoOrigem, setEnderecoOrigem] = useState<string>(''); 
   const [menssagem, setMenssagem] = useState<string>('');
+  const [date, setSelectedDate] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
 
   const [selectedValue, setSelectedValue] = useState('N');
   const [coordenadas, setCoordenadas] = useState({ lat: "", long: "" });
-
+  
   // seleciona por padrão o valor "Nenhuma" do campo "Interação pendente"
   const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSelectedValue(event.target.value);
@@ -113,26 +120,57 @@ export default function TesteForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!cliente || !assunto || !filial || !resposta) {
+    if (
+      !cliente || 
+      !assunto || 
+      !filial || 
+      !resposta ||
+      !prioridade ||
+      !resposta ||
+      !enderecoOrigem ||
+      !tipo ||
+      !selectedValue ||
+      !horario ||
+      !origem ||
+      !atendimento ||
+      !funcionarios ||
+      !departamento ||
+      !processo ||
+      !date
+    ) {
       alert('Preencha todos os campos antes de enviar.');
       return;
     }
 
     const payload = {
       "id_cliente": cliente.id,
+      "id_filial": filial.id,
       "id_assunto": assunto.id,
+      "titulo": assunto.name,
+      "origem_endereco": enderecoOrigem,
       "prioridade": prioridade,
       "menssagem": resposta.message,
-      "tipo": "C",
-      "titulo": assunto.name,
-      "id_ticket_setor": "5",
-      "su_status": "N",
+      "tipo": tipo,
+      "su_status": selectedValue,
+      "melhor_horario_reserva": horario,
+      "id_ticket_origem": origem,
+      "id_resposta": resposta.id,
+      "id_canal_atendimento": atendimento?.id,
+      "id_evento_status_processo": status?.id,
+      "id_responsavel_tecnico": funcionarios.id,
+      "id_ticket_setor": departamento?.id,
+      "id_wfl_processo": processo.id,
+      "data_reservada": date,
     };  
 
     setIsLoading(true);
     submitData(payload);
   };
 
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedDate(event.target.value);
+  }
+  console.log("data: ",date);
   return (
     <form onSubmit={handleSubmit} >
 
@@ -242,14 +280,21 @@ export default function TesteForm({
         >Endereço: </label>
       <div className="col-span-2 flex">
         <input
-          value={`${cliente?.street || ''}, ${cliente?.streetNumber || ''} - ${cliente?.neighborhood || ''}, ${cliente?.city} - ${cliente?.state} ${cliente?.cep || ''}`}
+          value={ 
+            cliente?.street || cliente?.streetNumber || cliente?.neighborhood || cliente?.city || cliente?.state || cliente?.cep
+              ? `${cliente?.street || ''}, ${cliente?.streetNumber || ''} - ${cliente?.neighborhood || ''}, ${cliente?.city || ''} - ${cliente?.state || ''} ${cliente?.cep || ''}`
+              : ''
+            }
           onChange={(e) => {
-            const [street, streetNumber, neighborhood] = e.target.value.split(', '); // Divide os valores por vírgula e espaço
+            const [street, streetNumber, neighborhood, city, state, cep] = e.target.value.split(', '); // Divide os valores por vírgula e espaço
             setCliente({
               ...cliente,
               street: street || '', // Atualiza o valor de street
-              streetNumber: streetNumber || '',     // Atualiza o valor de city
-              neighborhood: neighborhood || '',   // Atualiza o valor de state
+              streetNumber: streetNumber || '',     // Atualiza o valor de streetNumber
+              neighborhood: neighborhood || '',   // Atualiza o valor de neighborhood
+              city: city || '',   // Atualiza o valor de city
+              state: state || '',   // Atualiza o valor de state
+              cep: cep || '',   // Atualiza o valor de cep
             } as Option);
           }}
           id="endereco"
@@ -296,10 +341,10 @@ export default function TesteForm({
           className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Processo: </label>
           <div className="col-span-2">
             <AutocompleteInput
-            initialData={departamentoData}
-            hasError={departamentoError}
-            onChange={(value) => setDepartamento(value)} 
-            value={departamento?.name || ''} 
+            initialData={processoData}
+            hasError={processoError}
+            onChange={(value) => setProcesso(value)} 
+            value={processo?.name || ''} 
             />
           </div>
         </div>
@@ -346,7 +391,7 @@ export default function TesteForm({
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Data reservada: </label>
         <div className="col-span-2">
           <input type="date" name="date" id="date" className="border rounded-md shadow-sm
-         focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200"/>
+         focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200" value={date} onChange={handleDateChange}/>
         </div>
     </div>
 
@@ -389,8 +434,8 @@ export default function TesteForm({
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Descrição: </label>
         <div className="col-span-2">
         <textarea
-          value={resposta?.message || ''}
-          onChange={(e) => setResposta({ name: e.target.value } as Option)}
+          value={resposta?.message}
+          onChange={(event) => setMenssagem(event.target.value)}
           rows={4}
           maxLength={2147483647}
           cols={100}

@@ -9,14 +9,24 @@ export async function POST(req: Request) {
 
   const body = await req.json();
   const param = {
-    "tipo": "C",
     "id_cliente": body.id_cliente,
     "id_assunto": body.id_assunto,
     "titulo": body.titulo,
-    "id_ticket_setor": "5",
     "prioridade": body.prioridade,
     "menssagem": body.menssagem,
-    "su_status": "N",
+    "su_status": body.su_status,
+    "id_filial": body.id_filial,
+    "origem_endereco": body.origem_endereco,
+    "tipo": body.tipo,
+    "melhor_horario_reserva": body.melhor_horario_reserva,
+    "id_ticket_origem": body.id_ticket_origem,
+    "id_resposta": body.id_resposta,
+    "id_canal_atendimento": body.id_canal_atendimento,
+    "id_evento_status_processo": body.id_evento_status_processo,
+    "id_ticket_setor": body.id_ticket_setor,
+    "id_responsavel_tecnico": body.id_responsavel_tecnico,
+    "id_wfl_processo": body.id_wfl_processo,
+    "data_reservada": body.data_reservada,
   }
     const url = process.env.SECRET_API!;
     const username = process.env.SECRET_USERNAME;
