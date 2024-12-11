@@ -5,8 +5,10 @@ export async function POST(req: Request) {
 
   dotenv.config();
 
-  try {
 
+
+  try {
+    
   const body = await req.json();
   const param = {
     "id_cliente": body.id_cliente,

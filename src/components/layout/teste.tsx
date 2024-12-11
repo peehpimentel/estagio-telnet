@@ -21,7 +21,8 @@ interface Option {
   long?: string,
   city?: string,
   state?: string,
-  date?: Date;
+  date?: Date,
+  contract?: number,
 }
 
 interface TesteFormProps {
@@ -34,6 +35,7 @@ interface TesteFormProps {
   atendimentoData: Option[];
   statusData: Option[];
   processoData: Option[];
+  loginData: Option[];
   clientesError: boolean;
   assuntoError: boolean;
   filialError: boolean;
@@ -43,6 +45,7 @@ interface TesteFormProps {
   atendimentoError: boolean;
   statusError: boolean;
   processoError: boolean;
+  loginError: boolean;
 }
 
 export default function TesteForm({
@@ -55,6 +58,7 @@ export default function TesteForm({
   atendimentoData,
   statusData,
   processoData,
+  loginData,
   clientesError,
   assuntoError,
   filialError,
@@ -64,9 +68,10 @@ export default function TesteForm({
   atendimentoError,
   statusError,
   processoError,
-
+  loginError,
 }: TesteFormProps) {
   const [cliente, setCliente] = useState<Option | null>(null);
+  const [login, setLogin] = useState<Option | null>(null);
   const [assunto, setAssunto] = useState<Option | null>(null);
   const [filial, setFilial] = useState<Option | null>(null);
   const [departamento, setDepartamento] = useState<Option | null>(null);
@@ -92,7 +97,7 @@ export default function TesteForm({
   // seleciona por padrão o valor "Nenhuma" do campo "Interação pendente"
   const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
     setSelectedValue(event.target.value);
-  };
+  }
 
   const submitData = async (payload: any) => {
     try {
@@ -115,7 +120,7 @@ export default function TesteForm({
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -142,6 +147,14 @@ export default function TesteForm({
       return;
     }
 
+    function formatDateToBR(dateUS: string){
+      const [year, month, day] = dateUS.split('-');
+      return `${day}/${month}/${year}`
+    }
+  
+    const dataUS = date;
+    const dataBR = formatDateToBR(dataUS);
+
     const payload = {
       "id_cliente": cliente.id,
       "id_filial": filial.id,
@@ -160,19 +173,19 @@ export default function TesteForm({
       "id_responsavel_tecnico": funcionarios.id,
       "id_ticket_setor": departamento?.id,
       "id_wfl_processo": processo.id,
-      "data_reservada": date,
-    };  
+      "data_reservada": dataBR,
+    }  
 
     setIsLoading(true);
     submitData(payload);
-  };
+  }
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedDate(event.target.value);
   }
-  console.log("data: ",date);
+
   return (
-    <form onSubmit={handleSubmit} >
+    <form onSubmit={handleSubmit}>
 
     <div className="grid gap-2 w-full max-w-lg mx-auto">
 
@@ -215,6 +228,22 @@ export default function TesteForm({
           hasError={clientesError}
           onChange={(value) => setCliente(value)} 
           value={cliente?.name || ''}
+          />
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-3 items-center gap-5">      
+        <label htmlFor="cliente" 
+        className="text-md font-medium text-gray-300 
+        whitespace-nowrap justify-self-end text-right">Login: 
+        </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          placeholder=""
+          initialData={loginData}
+          hasError={loginError}
+          onChange={(value) => setLogin(value)} 
+          value={String(login?.contract || '')}
           />
         </div>
       </div>

@@ -230,7 +230,8 @@ model cliente {
   regua_cobranca_wpp               cliente_regua_cobranca_wpp?               @default(S)
   regua_cobranca_notificacao       cliente_regua_cobranca_notificacao?       @default(S)
   regime_fiscal_col                cliente_regime_fiscal_col?
-
+  radusuarios                      radusuarios[]
+  
   @@index([bairro], map: "bairro")
   @@index([bairro_cob], map: "bairro_cob")
   @@index([cep], map: "cep")
@@ -754,6 +755,150 @@ model su_ticket_setor {
   mostra_hotsite        su_ticket_setor_mostra_hotsite        @default(S)
 }
 
+model radusuarios {
+  id                               Int                                           @id @default(autoincrement())
+  id_cliente                       Int
+  cliente                          cliente?                                      @relation(fields: [id_cliente], references:[id])
+  id_grupo                         Int
+  senha                            String?                                       @db.VarChar(50)
+  login                            String                                        @db.VarChar(50)
+  login_simultaneo                 Int                                           @default(0)
+  ativo                            radusuarios_ativo                             @default(S)
+  ip                               String?                                       @db.VarChar(30)
+  mac                              String?                                       @db.VarChar(30)
+  obs                              String?                                       @db.LongText
+  auto_preencher_ip                radusuarios_auto_preencher_ip?                @default(H)
+  auto_preencher_mac               radusuarios_auto_preencher_mac?               @default(H)
+  fixar_ip                         radusuarios_fixar_ip?                         @default(H)
+  id_contrato                      Int?
+  autenticacao_por_mac             radusuarios_autenticacao_por_mac?             @default(P)
+  autenticacao                     radusuarios_autenticacao?                     @default(L)
+  cache                            radusuarios_cache?                            @default(S)
+  relacionar_ip_ao_login           radusuarios_relacionar_ip_ao_login?           @default(H)
+  relacionar_mac_ao_login          radusuarios_relacionar_mac_ao_login?          @default(H)
+  online                           radusuarios_online?                           @default(SS)
+  concentrador                     String?                                       @db.VarChar(50)
+  conexao                          String?                                       @db.VarChar(100)
+  tipo_conexao                     String?                                       @db.VarChar(50)
+  porta_http                       String?                                       @default("80") @db.VarChar(10)
+  id_concentrador                  Int?
+  interface                        Int?
+  latitude                         String?                                       @db.VarChar(50)
+  longitude                        String?                                       @db.VarChar(50)
+  tipo_conexao_mapa                radusuarios_tipo_conexao_mapa?                @default(C58)
+  senha_md5                        radusuarios_senha_md5                         @default(N)
+  ip_aviso                         String?                                       @db.VarChar(100)
+  id_transmissor                   Int?
+  onu_mac                          String?                                       @db.VarChar(30)
+  id_caixa_ftth                    Int?
+  senha_router1                    String?                                       @db.VarChar(50)
+  senha_router2                    String?                                       @db.VarChar(50)
+  senha_rede_sem_fio               String?                                       @db.VarChar(50)
+  ftth_porta                       Int?
+  id_porta_transmissor             Int?
+  cliente_tem_a_senha              radusuarios_cliente_tem_a_senha?
+  autenticacao_wps                 radusuarios_autenticacao_wps?
+  autenticacao_mac                 radusuarios_autenticacao_mac?
+  autenticacao_wpa                 String?                                       @db.VarChar(30)
+  tipo_vinculo_plano               radusuarios_tipo_vinculo_plano                @default(D)
+  ultima_conexao_inicial           DateTime?                                     @db.DateTime(0)
+  ultima_conexao_final             DateTime?                                     @db.DateTime(0)
+  tempo_conectado                  Int?
+  id_hardware                      Int?
+  tipo_equipamento                 radusuarios_tipo_equipamento?
+  metragem_interna                 Int?
+  metragem_externa                 Int?
+  tronco                           String?                                       @db.VarChar(100)
+  splitter                         Int?
+  sinal_ultimo_atendimento         String?                                       @db.VarChar(20)
+  interface_transmissao            Int?
+  porta_router2                    Int?                                          @default(8091)
+  franquia_maximo                  Int?
+  franquia_atingida                radusuarios_franquia_atingida                 @default(N)
+  franquia_consumo                 Decimal?                                      @db.Decimal(10, 5)
+  franquia_consumo_up              Decimal?                                      @db.Decimal(10, 5)
+  endereco                         String?                                       @db.VarChar(200)
+  endereco_padrao_cliente          radusuarios_endereco_padrao_cliente           @default(S)
+  numero                           String?                                       @db.VarChar(20)
+  bairro                           String?                                       @db.VarChar(100)
+  cidade                           Int?
+  cep                              String?                                       @db.VarChar(20)
+  complemento                      String?                                       @db.VarChar(200)
+  referencia                       String?                                       @db.VarChar(200)
+  id_condominio                    Int?
+  ssid_router_wifi                 String?                                       @db.VarChar(50)
+  bloco                            String?                                       @db.VarChar(100)
+  apartamento                      Int?
+  vlan                             Int?
+  vlan_ip_rede                     String?                                       @db.VarChar(50)
+  id_df_projeto                    Int?
+  rota                             String                                        @db.VarChar(20)
+  agent_circuit_id                 String?                                       @db.VarChar(100)
+  usuario_router1                  String?                                       @db.VarChar(50)
+  pd_ipv6                          String?                                       @db.VarChar(100)
+  perfil_autorizar_onu             Int?
+  download_atual                   BigInt?
+  upload_atual                     BigInt?
+  relacionar_concentrador_ao_login radusuarios_relacionar_concentrador_ao_login? @default(H)
+  pool_radius                      Int?
+  id_rad_dns                       Int
+  modelo_tranmissor                String?                                       @db.VarChar(10)
+  ultima_atualizacao               DateTime                                      @default(now()) @db.Timestamp(0)
+  gw_vlan                          String?                                       @db.VarChar(50)
+  motivo_desconexao                String?                                       @db.VarChar(32)
+  count_desconexao                 Int?
+  tempo_conexao                    Int?
+  fixar_ipv6                       radusuarios_fixar_ipv6?                       @default(H)
+  auto_preencher_ipv6              radusuarios_auto_preencher_ipv6?              @default(H)
+  relacionar_ipv6_ao_login         radusuarios_relacionar_ipv6_ao_login?         @default(H)
+  id_filial                        Int?
+  ip_aux                           String?                                       @db.VarChar(50)
+  porta_aux                        Int?
+  ponta                            radusuarios_ponta?
+  id_radgrupos_pools               Int?                                          @default(0)
+  service_tag_vlan                 radusuarios_service_tag_vlan?                 @default(N)
+  framed_fixar_ipv6                radusuarios_framed_fixar_ipv6?                @default(H)
+  framed_autopreencher_ipv6        radusuarios_framed_autopreencher_ipv6?        @default(H)
+  framed_relacionar_ipv6_ao_login  radusuarios_framed_relacionar_ipv6_ao_login?  @default(H)
+  framed_relaciona_ipv6_ao_login   radusuarios_framed_relaciona_ipv6_ao_login?   @default(H)
+  framed_pd_ipv6                   String?                                       @db.VarChar(100)
+  id_integracao                    Int?
+  lte_auth_key                     String?                                       @db.VarChar(100)
+  lte_auth_opc                     String?                                       @db.VarChar(100)
+  lte_id                           String?                                       @db.VarChar(100)
+  lte_apns                         String?                                       @db.VarChar(100)
+  acct_session_id                  String?                                       @db.VarChar(100)
+  ssid_router_wifi_5ghz            String?                                       @db.VarChar(50)
+  senha_rede_sem_fio_5ghz          String?                                       @db.VarChar(50)
+  mtu                              Int                                           @default(1500) @db.UnsignedInt
+  onu_compartilhada                radusuarios_onu_compartilhada                 @default(N)
+  id_reserva_rede_neutra           Int?
+  tipo_acesso                      radusuarios_tipo_acesso                       @default(http)
+  usuario_wpa2aes                  String                                        @db.VarChar(50)
+  senha_wpa2aes                    String                                        @db.VarChar(50)
+  pacote_lte                       String?                                       @db.VarChar(50)
+
+  @@index([agent_circuit_id], map: "agent_circuit_id")
+  @@index([bairro], map: "bairro")
+  @@index([cep], map: "cep")
+  @@index([cidade], map: "cidade")
+  @@index([id_caixa_ftth], map: "id_caixa_ftth")
+  @@index([id_cliente], map: "id_cliente")
+  @@index([id_concentrador], map: "id_concentrador")
+  @@index([id_contrato], map: "id_contrato")
+  @@index([id_df_projeto], map: "id_df_projeto")
+  @@index([id_grupo], map: "id_grupo")
+  @@index([id_porta_transmissor], map: "id_porta_transmissor")
+  @@index([id_transmissor], map: "id_transmissor")
+  @@index([ip], map: "ip")
+  @@index([latitude], map: "latitude")
+  @@index([login], map: "login_2")
+  @@index([longitude], map: "longitude")
+  @@index([mac], map: "mac")
+  @@index([pd_ipv6], map: "pd_ipv6")
+  @@index([ultima_atualizacao], map: "ultima_atualizacao")
+  @@index([ultima_conexao_inicial], map: "ultima_conexao_inicial")
+}
 
 enum cliente_tipo_pessoa {
   J
@@ -1704,3 +1849,189 @@ enum su_ticket_setor_mostra_hotsite {
   N
 }
 
+enum radusuarios_ativo {
+  S
+  N
+}
+
+enum radusuarios_auto_preencher_mac {
+  H
+  S
+  N
+}
+
+enum radusuarios_fixar_ip {
+  H
+  S
+  N
+}
+
+enum radusuarios_autenticacao_por_mac {
+  P
+  N
+  S
+  MK
+  UN
+  WP
+}
+
+enum radusuarios_autenticacao {
+  L
+  M
+  H
+  V
+  D
+  I
+  E
+}
+
+enum radusuarios_cache {
+  S
+  N
+}
+
+enum radusuarios_relacionar_ip_ao_login {
+  H
+  S
+  N
+}
+
+enum radusuarios_relacionar_mac_ao_login {
+  H
+  S
+  N
+}
+
+enum radusuarios_online {
+  S
+  N
+  SS
+}
+
+enum radusuarios_tipo_conexao_mapa {
+  C58 @map("58")
+  V24 @map("24")
+  F
+  L
+  A
+  LTE
+  LDD
+}
+
+enum radusuarios_senha_md5 {
+  N
+  S
+}
+
+enum radusuarios_cliente_tem_a_senha {
+  S
+  N
+}
+
+enum radusuarios_autenticacao_wps {
+  S
+  N
+}
+
+enum radusuarios_autenticacao_mac {
+  S
+  N
+}
+
+enum radusuarios_tipo_vinculo_plano {
+  D
+  C
+  P
+  G
+}
+
+enum radusuarios_tipo_equipamento {
+  C
+  P
+}
+
+enum radusuarios_franquia_atingida {
+  S
+  N
+}
+
+enum radusuarios_endereco_padrao_cliente {
+  S
+  N
+  C
+}
+
+enum radusuarios_relacionar_concentrador_ao_login {
+  S
+  N
+  H
+}
+
+enum radusuarios_fixar_ipv6 {
+  H
+  S
+  N
+}
+
+enum radusuarios_auto_preencher_ipv6 {
+  H
+  S
+  N
+}
+
+enum radusuarios_relacionar_ipv6_ao_login {
+  H
+  S
+  N
+}
+
+enum radusuarios_ponta {
+  A
+  B
+  C
+}
+
+enum radusuarios_service_tag_vlan {
+  S
+  N
+}
+
+enum radusuarios_framed_fixar_ipv6 {
+  H
+  S
+  N
+}
+
+enum radusuarios_framed_autopreencher_ipv6 {
+  H
+  S
+  N
+}
+
+enum radusuarios_framed_relacionar_ipv6_ao_login {
+  H
+  S
+  N
+}
+
+enum radusuarios_framed_relaciona_ipv6_ao_login {
+  H
+  S
+  N
+}
+
+enum radusuarios_onu_compartilhada {
+  S
+  N
+}
+
+enum radusuarios_tipo_acesso {
+  https
+  http
+}
+
+enum radusuarios_auto_preencher_ip {
+  H
+  S
+  N
+}

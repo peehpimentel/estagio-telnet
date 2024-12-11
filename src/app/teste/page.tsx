@@ -32,14 +32,14 @@ async function getClientes() {
       data: clientes.map(cliente => ({
         id: cliente.id,
         name: cliente.razao,
-        street: cliente.endereco,
-        streetNumber: cliente.numero,
-        neighborhood: cliente.bairro,
-        cep: cliente.cep,
-        lat: cliente.latitude,
-        long: cliente.longitude,
-        city: cliente.cidadeID?.nome,
-        state: cliente.cidadeID?.ufID?.sigla
+        street: cliente.endereco ?? undefined,
+        streetNumber: cliente.numero ?? undefined,
+        neighborhood: cliente.bairro ?? undefined,
+        cep: cliente.cep ?? undefined,
+        lat: cliente.latitude ?? undefined,
+        long: cliente.longitude ?? undefined,
+        city: cliente.cidadeID?.nome ?? undefined,
+        state: cliente.cidadeID?.ufID?.sigla ?? undefined,
       })),
       error: false
     };
@@ -246,6 +246,36 @@ async function getProcesso() {
   }
 }
 
+async function getLogin() {
+  try {
+    const login = await prisma.radusuarios.findMany({
+      select: {
+        id: true,
+        login: true,
+        cliente: {
+          select: {
+            id: true,
+          }
+        }
+      },
+    });
+    return {
+      data: login.map(login => ({
+        id: login.id,
+        name: login.login,
+        contract: login.cliente?.id,
+      })),
+      error: false
+    };
+  } catch (error) {
+    console.error('Erro ao buscar o login:', error);
+    return {
+      data: [],
+      error: true
+    };
+  }
+}
+
 interface Option {
   id: number;
   name: string;
@@ -259,6 +289,7 @@ interface Option {
   city?: string,
   state?: string,
   date?: Date,
+  contract?: number,
 }
 
 interface TesteFormProps {
@@ -271,6 +302,7 @@ interface TesteFormProps {
   atendimentoData: Option[];
   statusData: Option[];
   processoData: Option[];
+  loginData: Option[];
   clientesError: boolean;
   assuntoError: boolean;
   filialError: boolean;
@@ -280,6 +312,7 @@ interface TesteFormProps {
   atendimentoError: boolean;
   statusError: boolean;
   processoError: boolean;
+  loginError: boolean;
 }
 
 export default async function TestePage() {
@@ -294,6 +327,7 @@ export default async function TestePage() {
     atendimentoResponse, 
     statusResponse,
     processoResponse,
+    loginResponse,
   ] = await Promise.all([
     getClientes(),
     getAssunto(),
@@ -304,6 +338,7 @@ export default async function TestePage() {
     getAtendimento(),
     getStatus(),
     getProcesso(),
+    getLogin(),
   ]);
 
   const { data: clientesData, error: clientesError } = clientesResponse;
@@ -315,6 +350,7 @@ export default async function TestePage() {
   const { data: atendimentoData, error: atendimentoError } = atendimentoResponse;
   const { data: statusData, error: statusError } = statusResponse;
   const { data: processoData, error: processoError } = processoResponse;
+  const { data: loginData, error: loginError } = loginResponse;
 
   const formData: TesteFormProps = {
     clientesData,
@@ -326,6 +362,7 @@ export default async function TestePage() {
     atendimentoData,
     statusData,
     processoData,
+    loginData,
     clientesError,
     assuntoError,
     filialError,
@@ -335,6 +372,7 @@ export default async function TestePage() {
     atendimentoError,
     statusError,
     processoError,
+    loginError,
   };
 
   return (
