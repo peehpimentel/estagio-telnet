@@ -27,6 +27,7 @@ interface Option {
 
 interface TesteFormProps {
   clientesData: Option[];
+  contratoData: Option[];
   assuntoData: Option[];
   filialData: Option[];
   departamentoData: Option[];
@@ -37,6 +38,7 @@ interface TesteFormProps {
   processoData: Option[];
   loginData: Option[];
   clientesError: boolean;
+  contratoError: boolean;
   assuntoError: boolean;
   filialError: boolean;
   departamentoError: boolean;
@@ -50,6 +52,7 @@ interface TesteFormProps {
 
 export default function TesteForm({
   clientesData,
+  contratoData,
   assuntoData,
   filialData,
   departamentoData,
@@ -69,8 +72,10 @@ export default function TesteForm({
   statusError,
   processoError,
   loginError,
+  contratoError,
 }: TesteFormProps) {
   const [cliente, setCliente] = useState<Option | null>(null);
+  const [contrato, setContrato] = useState<Option | null>(null);
   const [login, setLogin] = useState<Option | null>(null);
   const [assunto, setAssunto] = useState<Option | null>(null);
   const [filial, setFilial] = useState<Option | null>(null);
@@ -141,7 +146,9 @@ export default function TesteForm({
       !funcionarios ||
       !departamento ||
       !processo ||
-      !date
+      !date ||
+      !contrato ||
+      !login
     ) {
       alert('Preencha todos os campos antes de enviar.');
       return;
@@ -156,6 +163,8 @@ export default function TesteForm({
     const dataBR = formatDateToBR(dataUS);
 
     const payload = {
+      "id_login": login?.id,
+      "id_contrato": contrato?.id,
       "id_cliente": cliente.id,
       "id_filial": filial.id,
       "id_assunto": assunto.id,
@@ -233,7 +242,7 @@ export default function TesteForm({
       </div>
       
       <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="cliente" 
+        <label htmlFor="login" 
         className="text-md font-medium text-gray-300 
         whitespace-nowrap justify-self-end text-right">Login: 
         </label>
@@ -243,7 +252,27 @@ export default function TesteForm({
           initialData={loginData}
           hasError={loginError}
           onChange={(value) => setLogin(value)} 
-          value={String(login?.contract || '')}
+          value={login?.name || ''}
+          />
+        </div>
+      </div> 
+      
+      <div className="grid grid-cols-3 items-center gap-5">      
+        <label htmlFor="contrato" 
+        className="text-md font-medium text-gray-300 
+        whitespace-nowrap justify-self-end text-right">Contrato: 
+        </label>
+        <div className="col-span-2">
+          <AutocompleteInput
+          placeholder=""
+          initialData={contratoData}
+          hasError={contratoError}
+          onChange={(value) => setContrato(value)} 
+          value={ 
+            contrato?.name || contrato?.id
+              ? `${contrato?.name || ''} - ${contrato?.id || ''}`
+              : ''
+            }
           />
         </div>
       </div>

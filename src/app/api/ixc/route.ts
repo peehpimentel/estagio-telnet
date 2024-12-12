@@ -11,6 +11,8 @@ export async function POST(req: Request) {
     
   const body = await req.json();
   const param = {
+    "id_login": body.id_login,
+    "id_contrato": body.id_contrato,
     "id_cliente": body.id_cliente,
     "id_assunto": body.id_assunto,
     "titulo": body.titulo,

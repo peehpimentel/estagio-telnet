@@ -230,6 +230,7 @@ model cliente {
   regua_cobranca_wpp               cliente_regua_cobranca_wpp?               @default(S)
   regua_cobranca_notificacao       cliente_regua_cobranca_notificacao?       @default(S)
   regime_fiscal_col                cliente_regime_fiscal_col?
+  cliente_contrato                 cliente_contrato[]
   radusuarios                      radusuarios[]
   
   @@index([bairro], map: "bairro")
@@ -898,6 +899,193 @@ model radusuarios {
   @@index([pd_ipv6], map: "pd_ipv6")
   @@index([ultima_atualizacao], map: "ultima_atualizacao")
   @@index([ultima_conexao_inicial], map: "ultima_conexao_inicial")
+}
+
+model cliente_contrato {
+  id                                     Int                                                  @id @default(autoincrement())
+  id_vd_contrato                         Int
+  id_cliente                             Int
+  cliente                                cliente?                                             @relation(fields: [id_cliente], references:[id])  
+  status                                 cliente_contrato_status?                             @default(P)
+  data                                   DateTime                                             @db.Date
+  data_validade                          DateTime?                                            @db.Date
+  pago_ate_data                          DateTime?                                            @db.Date
+  renovacao_automatica                   cliente_contrato_renovacao_automatica?               @default(S)
+  valor_unitario                         Decimal?                                             @db.Decimal(15, 5)
+  id_tipo_contrato                       Int
+  contrato                               String                                              @db.VarChar(100)
+  id_filial                              Int?
+  id_tipo_documento                      Int?
+  id_carteira_cobranca                   Int?
+  id_vendedor                            Int?
+  comissao                               Decimal?                                             @db.Decimal(5, 2)
+  status_internet                        cliente_contrato_status_internet?                    @default(A)
+  bloqueio_automatico                    cliente_contrato_bloqueio_automatico?                @default(S)
+  nao_bloquear_ate                       DateTime?                                            @db.Date
+  aviso_atraso                           cliente_contrato_aviso_atraso?                       @default(S)
+  nao_avisar_ate                         DateTime?                                            @db.Date
+  obs                                    String?                                              @db.Text
+  id_modelo                              Int                                                  @default(1)
+  cc_previsao                            cliente_contrato_cc_previsao                         @default(P)
+  tipo_doc_opc                           Int?
+  data_cancelamento                      DateTime?                                            @db.Date
+  data_validada                          DateTime?                                            @db.Date
+  taxa_instalacao                        Decimal?                                             @default(0.00) @db.Decimal(15, 2)
+  desconto_fidelidade                    Decimal?                                             @default(0.00) @db.Decimal(15, 2)
+  fidelidade                             Int?                                                 @default(12)
+  taxa_improdutiva                       Decimal?                                             @db.Decimal(15, 3)
+  data_renovacao                         DateTime?                                            @db.Date
+  tipo                                   cliente_contrato_tipo_enum                           @default(I)
+  tel_franquia_segundos                  Int?
+  tel_franquia_prefix                    String?                                              @db.VarChar(250)
+  obs_cancelamento                       String?                                              @db.Text
+  motivo_cancelamento                    Int?
+  email_cobranca                         String?                                              @db.VarChar(250)
+  tipo_cobranca                          cliente_contrato_tipo_cobranca                       @default(P)
+  lote                                   Int?
+  condicao_pagamento_primeira_fat        Int?
+  data_negativacao                       DateTime?                                            @db.Date
+  protocolo_negativacao                  String?                                              @db.VarChar(50)
+  desbloqueio_confianca                  cliente_contrato_desbloqueio_confianca?              @default(P)
+  desbloqueio_confianca_ativo            cliente_contrato_desbloqueio_confianca_ativo?        @default(N)
+  descricao_aux_plano_venda              String?                                              @db.VarChar(200)
+  avalista_1                             Int?
+  avalista_2                             Int?
+  rec_bandeira                           String?                                              @db.VarChar(12)
+  rec_cartao                             String?                                              @db.VarChar(20)
+  rec_token                              String?                                              @db.VarChar(80)
+  data_ativacao                          DateTime?                                            @db.Date
+  imp_importacao                         cliente_contrato_imp_importacao?                     @default(N)
+  imp_carteira                           cliente_contrato_imp_carteira?                       @default(N)
+  imp_rede                               cliente_contrato_imp_rede?                           @default(N)
+  imp_bkp                                cliente_contrato_imp_bkp?                            @default(N)
+  imp_treinamento                        cliente_contrato_imp_treinamento?                    @default(N)
+  imp_status                             cliente_contrato_imp_status?
+  imp_obs                                String?                                              @db.Text
+  imp_realizado                          cliente_contrato_imp_realizado?
+  imp_motivo                             String?                                              @db.VarChar(250)
+  imp_inicial                            DateTime?                                            @db.Date
+  imp_final                              DateTime?                                            @db.Date
+  ativacao_numero_parcelas               String?                                              @db.VarChar(100)
+  ativacao_vencimentos                   String?                                              @db.VarChar(150)
+  ativacao_valor_parcela                 Decimal?                                             @db.Decimal(15, 2)
+  id_tipo_doc_ativ                       Int?
+  id_produto_ativ                        Int?
+  id_cond_pag_ativ                       Int?
+  id_vendedor_ativ                       Int?
+  endereco_padrao_cliente                cliente_contrato_endereco_padrao_cliente             @default(S)
+  endereco                               String?                                              @db.VarChar(200)
+  numero                                 String?                                              @db.VarChar(20)
+  bairro                                 String?                                              @db.VarChar(100)
+  cidade                                 Int?
+  cep                                    String?                                              @db.VarChar(20)
+  complemento                            String?                                              @db.VarChar(200)
+  referencia                             String?                                              @db.VarChar(200)
+  id_condominio                          Int?
+  nf_info_adicionais                     String?                                              @db.VarChar(1500)
+  assinatura_digital                     cliente_contrato_assinatura_digital?                 @default(P)
+  tipo_produtos_plano                    cliente_contrato_tipo_produtos_plano                 @default(P)
+  status_velocidade                      String                                               @default("N") @db.VarChar(2)
+  bloco                                  String?                                              @db.VarChar(100)
+  apartamento                            Int?
+  id_instalador                          Int?
+  motivo_inclusao                        cliente_contrato_motivo_inclusao                     @default(I)
+  latitude                               String?                                              @db.VarChar(30)
+  longitude                              String?                                              @db.VarChar(30)
+  id_crm_negociacoes                     Int?
+  tipo_doc_opc2                          Int?
+  tipo_doc_opc3                          Int?
+  tipo_doc_opc4                          Int?
+  liberacao_bloqueio_manual              cliente_contrato_liberacao_bloqueio_manual           @default(P)
+  indicacao_contrato_id                  Int
+  num_parcelas_atraso                    Int?
+  dt_ult_ativacao                        DateTime?                                            @db.Date
+  dt_ult_inativacao                      DateTime?                                            @db.Date
+  dt_utl_negativacao                     DateTime?                                            @db.Date
+  dt_ult_desb_conf                       DateTime?                                            @db.Date
+  dt_ult_desativacao                     DateTime?                                            @db.Date
+  dt_ult_bloq_manual                     DateTime?                                            @db.Date
+  dt_ult_bloq_auto                       DateTime?                                            @db.Date
+  dt_ult_finan_atraso                    DateTime?                                            @db.Date
+  dt_ult_desiste                         DateTime?                                            @db.Date
+  id_contrato_principal                  Int?
+  dt_ult_des_bloq_conf                   DateTime?                                            @db.Date
+  gerar_finan_assin_digital_contrato     cliente_contrato_gerar_finan_assin_digital_contrato? @default(P)
+  credit_card_recorrente_token           String?                                              @db.VarChar(512)
+  credit_card_recorrente_carteira_antiga Int?
+  data_cadastro_sistema                  DateTime?                                            @db.Date
+  credit_card_recorrente_bandeira_cartao String?                                              @db.VarChar(10)
+  credit_card_recorrente_dv_cartao       String?                                              @db.VarChar(4)
+  id_responsavel                         Int?
+  ultima_atualizacao                     DateTime                                             @default(now()) @db.Timestamp(0)
+  id_motivo_negativacao                  Int?
+  obs_negativacao                        String?                                              @db.Text
+  data_acesso_desativado                 DateTime?                                            @db.Date
+  restricao_auto_desbloqueio             cliente_contrato_restricao_auto_desbloqueio          @default(N)
+  motivo_restricao_auto_desbloq          String?                                              @db.Text
+  ativo_summit                           cliente_contrato_ativo_summit                        @default(N)
+  portabilidade_summit                   cliente_contrato_portabilidade_summit                @default(N)
+  inicio_vigencia_summit                 DateTime?                                            @db.Date
+  fim_vigencia_summit                    DateTime?                                            @db.Date
+  range_inicial_summit                   String?                                              @db.VarChar(15)
+  range_final_summit                     String?                                              @db.VarChar(15)
+  dt_ult_liberacao_susp_parc             DateTime?                                            @db.Date
+  nao_susp_parc_ate                      DateTime?                                            @db.Date
+  liberacao_suspensao_parcial            cliente_contrato_liberacao_suspensao_parcial?        @default(P)
+  utilizando_auto_libera_susp_parc       cliente_contrato_utilizando_auto_libera_susp_parc?   @default(N)
+  restricao_auto_libera_susp_parcial     cliente_contrato_restricao_auto_libera_susp_parcial? @default(N)
+  motivo_restri_auto_libera_parc         String?                                              @db.Text
+  id_indexador_reajuste                  Int?
+  id_cidade                              String                                               @db.Text
+  data_inicial_suspensao                 DateTime?                                            @db.Date
+  data_final_suspensao                   DateTime?                                            @db.Date
+  contrato_suspenso                      cliente_contrato_contrato_suspenso                   @default(N)
+  data_retomada_contrato                 DateTime?                                            @db.Date
+  dt_ult_liberacao_temporaria            DateTime?                                            @db.Date
+  updated_responsible_seller             cliente_contrato_updated_responsible_seller?         @default(N)
+  data_desistencia                       DateTime?                                            @db.Date
+  motivo_desistencia                     Int?                                                 @db.UnsignedInt
+  obs_desistencia                        String?                                              @db.Text
+  obs_contrato                           String?                                              @db.Text
+  alerta_contrato                        String?                                              @db.Text
+  data_expiracao                         DateTime                                             @db.Date
+  numero_antigo                          String?                                              @db.VarChar(40)
+  base_geracao_tipo_doc                  cliente_contrato_base_geracao_tipo_doc?              @default(P)
+  integracao_assinatura_digital          cliente_contrato_integracao_assinatura_digital?      @default(P)
+  token_assinatura_digital               String?                                              @db.VarChar(50)
+  url_assinatura_digital                 String?                                              @db.VarChar(250)
+  moeda                                  String?                                              @db.VarChar(5)
+  testemunha_assinatura_digital          Int?                                                 @db.UnsignedInt
+  selfie_photo                           cliente_contrato_selfie_photo                        @default(P)
+  document_photo                         cliente_contrato_document_photo                      @default(P)
+  id_vindi                               Int?                                                 @db.UnsignedInt
+  data_assinatura                        DateTime?                                            @db.Date
+  ids_contratos_recorrencia              String?                                              @db.Text
+  motivo_adicional                       Int?                                                 @db.UnsignedInt
+  concorrente_mot_adicional              Int?                                                 @db.UnsignedInt
+  id_responsavel_desistencia             Int?                                                 @db.UnsignedInt
+  id_responsavel_cancelamento            Int?                                                 @db.UnsignedInt
+  id_responsavel_negativacao             Int?                                                 @db.UnsignedInt
+  chave_pix                              String?                                              @db.VarChar(120)
+  tipo_localidade                        cliente_contrato_tipo_localidade                     @default(U)
+  isentar_contrato                       cliente_contrato_isentar_contrato?                   @default(N)
+  financeiro_migrado                     cliente_contrato_financeiro_migrado?                 @default(N)
+  id_notifica_massa                      Int?
+  estrato_social_col                     cliente_contrato_estrato_social_col?
+  agrupar_financeiro_contrato            cliente_contrato_agrupar_financeiro_contrato         @default(P)
+
+  @@index([bairro], map: "bairro")
+  @@index([cep], map: "cep")
+  @@index([cidade], map: "cidade")
+  @@index([id_modelo], map: "cliente_contrato_ibfk_5")
+  @@index([id_carteira_cobranca], map: "id_carteira_cobranca")
+  @@index([id_cliente], map: "id_cliente")
+  @@index([id_crm_negociacoes], map: "id_crm_negociacoes")
+  @@index([id_filial], map: "id_filial")
+  @@index([id_tipo_contrato], map: "id_tipo_contrato")
+  @@index([id_tipo_documento], map: "id_tipo_documento")
+  @@index([id_vd_contrato], map: "id_vd_contrato")
+  @@index([ultima_atualizacao], map: "ultima_atualizacao")
 }
 
 enum cliente_tipo_pessoa {
@@ -2034,4 +2222,239 @@ enum radusuarios_auto_preencher_ip {
   H
   S
   N
+}
+
+enum cliente_contrato_status {
+  A
+  I
+  P
+  N
+  D
+}
+
+enum cliente_contrato_renovacao_automatica {
+  S
+  N
+}
+
+enum cliente_contrato_status_internet {
+  A
+  D
+  CM
+  CA
+  CE
+  FA
+  AA
+}
+
+enum cliente_contrato_bloqueio_automatico {
+  S
+  N
+}
+
+enum cliente_contrato_aviso_atraso {
+  S
+  N
+}
+
+enum cliente_contrato_cc_previsao {
+  P
+  N
+  S
+  M
+}
+
+enum cliente_contrato_tipo_enum {
+  I
+  T
+  S
+  SVA
+}
+
+enum cliente_contrato_tipo_cobranca {
+  P
+  I
+  E
+}
+
+enum cliente_contrato_desbloqueio_confianca {
+  S
+  N
+  P
+}
+
+enum cliente_contrato_desbloqueio_confianca_ativo {
+  S
+  N
+}
+
+enum cliente_contrato_imp_importacao {
+  S
+  N
+}
+
+enum cliente_contrato_imp_carteira {
+  S
+  N
+}
+
+
+enum cliente_contrato_imp_rede {
+  S
+  N
+}
+
+enum cliente_contrato_imp_bkp {
+  S
+  N
+}
+
+enum cliente_contrato_imp_treinamento {
+  S
+  N
+}
+
+enum cliente_contrato_imp_status {
+  F
+  A
+}
+
+enum cliente_contrato_imp_realizado {
+  S
+  N
+}
+
+enum cliente_contrato_endereco_padrao_cliente {
+  S
+  N
+}
+
+enum cliente_contrato_assinatura_digital {
+  S
+  N
+  P
+}
+
+enum cliente_contrato_tipo_produtos_plano {
+  P
+  PLA
+  PRO
+}
+
+enum cliente_contrato_motivo_inclusao {
+  I
+  U
+  D
+  M
+  T
+  L
+  N
+  R
+}
+
+enum cliente_contrato_liberacao_bloqueio_manual {
+  S
+  N
+  P
+}
+
+enum cliente_contrato_gerar_finan_assin_digital_contrato {
+  S
+  N
+  P
+}
+
+enum cliente_contrato_restricao_auto_desbloqueio {
+  S
+  N
+}
+
+enum cliente_contrato_ativo_summit {
+  S
+  N
+}
+
+enum cliente_contrato_portabilidade_summit {
+  S
+  N
+}
+
+enum cliente_contrato_liberacao_suspensao_parcial {
+  H
+  D
+  P
+}
+
+enum cliente_contrato_restricao_auto_libera_susp_parcial {
+  S
+  N
+}
+
+enum cliente_contrato_utilizando_auto_libera_susp_parc {
+  S
+  N
+}
+
+enum cliente_contrato_contrato_suspenso {
+  S
+  N
+}
+
+enum cliente_contrato_updated_responsible_seller {
+  S
+  N
+}
+
+enum cliente_contrato_base_geracao_tipo_doc {
+  OPC
+  PROD
+  P
+}
+
+enum cliente_contrato_integracao_assinatura_digital {
+  S
+  N
+  P
+}
+
+enum cliente_contrato_selfie_photo {
+  S
+  N
+  P
+}
+
+enum cliente_contrato_document_photo {
+  S
+  N
+  P
+}
+
+enum cliente_contrato_tipo_localidade {
+  R
+  U
+}
+
+enum cliente_contrato_isentar_contrato {
+  S
+  N
+}
+
+enum cliente_contrato_financeiro_migrado {
+  S
+  N
+}
+
+enum cliente_contrato_estrato_social_col {
+  Z1 @map("1")
+  Z2 @map("2")
+  Z3 @map("3")
+  Z4 @map("4")
+  Z5 @map("5")
+  Z6 @map("6")
+}
+
+enum cliente_contrato_agrupar_financeiro_contrato {
+  S
+  N
+  P
 }

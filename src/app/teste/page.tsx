@@ -52,6 +52,36 @@ async function getClientes() {
   }
 }
 
+async function getContrato() {
+  try {
+    const contratos = await prisma.cliente_contrato.findMany({
+      select: {
+        id: true,
+        contrato: true,
+        cliente: {
+          select: {
+            id: true,
+            razao: true,
+          }
+        }
+      },
+    });
+    return {
+      data: contratos.map(contratos => ({
+        id: contratos.id,
+        name: contratos.contrato || '',
+      })),
+      error: false
+    };
+  } catch (error) {
+    console.error('Erro ao buscar contratos do cliente:', error);
+    return {
+      data: [],
+      error: true
+    };
+  }
+}
+
 async function getAssunto() {
   try {
     const assunto = await prisma.su_oss_assunto.findMany({
@@ -246,9 +276,16 @@ async function getProcesso() {
   }
 }
 
-async function getLogin() {
+async function getLogin(clienteId = null) {
   try {
     const login = await prisma.radusuarios.findMany({
+      where: clienteId
+      ? {
+        cliente: {
+          id: clienteId,
+        },
+      }
+      : {},
       select: {
         id: true,
         login: true,
@@ -294,6 +331,7 @@ interface Option {
 
 interface TesteFormProps {
   clientesData: Option[];
+  contratoData: Option[];
   assuntoData: Option[];
   filialData: Option[];
   departamentoData: Option[];
@@ -304,6 +342,7 @@ interface TesteFormProps {
   processoData: Option[];
   loginData: Option[];
   clientesError: boolean;
+  contratoError: boolean;
   assuntoError: boolean;
   filialError: boolean;
   departamentoError: boolean;
@@ -315,10 +354,14 @@ interface TesteFormProps {
   loginError: boolean;
 }
 
+const clientesIdResponse = await getClientes();
+const clienteId = clientesIdResponse.data?.[0]?.id;
+
 export default async function TestePage() {
 
   const [
     clientesResponse, 
+    contratoResponse, 
     assuntosResponse, 
     filialResponse, 
     departamentoResponse, 
@@ -330,6 +373,7 @@ export default async function TestePage() {
     loginResponse,
   ] = await Promise.all([
     getClientes(),
+    getContrato(),
     getAssunto(),
     getFilial(),
     getDepartamento(),
@@ -342,6 +386,7 @@ export default async function TestePage() {
   ]);
 
   const { data: clientesData, error: clientesError } = clientesResponse;
+  const { data: contratoData, error: contratoError } = contratoResponse;
   const { data: assuntoData, error: assuntoError } = assuntosResponse;
   const { data: filialData, error: filialError } = filialResponse;
   const { data: departamentoData, error: departamentoError } = departamentoResponse;
@@ -354,6 +399,7 @@ export default async function TestePage() {
 
   const formData: TesteFormProps = {
     clientesData,
+    contratoData,
     assuntoData,
     filialData,
     departamentoData,
@@ -373,6 +419,7 @@ export default async function TestePage() {
     statusError,
     processoError,
     loginError,
+    contratoError,
   };
 
   return (
