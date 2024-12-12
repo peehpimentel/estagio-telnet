@@ -5,7 +5,7 @@ async function getClientes() {
   try {
     const clientes = await prisma.cliente.findMany({
       where: {
-        ativo: "S",
+        ativo: 'S',
       },
       select: {
         id: true,
@@ -55,6 +55,9 @@ async function getClientes() {
 async function getContrato() {
   try {
     const contratos = await prisma.cliente_contrato.findMany({
+      where: {
+        status: 'A',
+      },
       select: {
         id: true,
         contrato: true,
@@ -70,6 +73,7 @@ async function getContrato() {
       data: contratos.map(contratos => ({
         id: contratos.id,
         name: contratos.contrato || '',
+        references: contratos.cliente?.id,
       })),
       error: false
     };
@@ -276,31 +280,32 @@ async function getProcesso() {
   }
 }
 
-async function getLogin(clienteId = null) {
+async function getLogin() {
   try {
     const login = await prisma.radusuarios.findMany({
-      where: clienteId
-      ? {
-        cliente: {
-          id: clienteId,
-        },
-      }
-      : {},
+      where: {
+        ativo: 'S',
+      },
       select: {
         id: true,
         login: true,
         cliente: {
           select: {
             id: true,
-          }
-        }
+          },
+        },
+        cliente_contrato: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     return {
       data: login.map(login => ({
         id: login.id,
         name: login.login,
-        contract: login.cliente?.id,
+        references: login.cliente?.id,
       })),
       error: false
     };
@@ -329,9 +334,15 @@ interface Option {
   contract?: number,
 }
 
+interface OptionCliente {
+  id: number;
+  name: string;
+  references?: number;
+}
+
 interface TesteFormProps {
   clientesData: Option[];
-  contratoData: Option[];
+  contratoData: OptionCliente[];
   assuntoData: Option[];
   filialData: Option[];
   departamentoData: Option[];
@@ -340,7 +351,7 @@ interface TesteFormProps {
   atendimentoData: Option[];
   statusData: Option[];
   processoData: Option[];
-  loginData: Option[];
+  loginData: OptionCliente[];
   clientesError: boolean;
   contratoError: boolean;
   assuntoError: boolean;
@@ -353,9 +364,6 @@ interface TesteFormProps {
   processoError: boolean;
   loginError: boolean;
 }
-
-const clientesIdResponse = await getClientes();
-const clienteId = clientesIdResponse.data?.[0]?.id;
 
 export default async function TestePage() {
 

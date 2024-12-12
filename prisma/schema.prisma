@@ -760,6 +760,7 @@ model radusuarios {
   id                               Int                                           @id @default(autoincrement())
   id_cliente                       Int
   cliente                          cliente?                                      @relation(fields: [id_cliente], references:[id])
+  cliente_contrato                 cliente_contrato?                             @relation(fields: [id_contrato], references:[id])
   id_grupo                         Int
   senha                            String?                                       @db.VarChar(50)
   login                            String                                        @db.VarChar(50)
@@ -1073,6 +1074,7 @@ model cliente_contrato {
   id_notifica_massa                      Int?
   estrato_social_col                     cliente_contrato_estrato_social_col?
   agrupar_financeiro_contrato            cliente_contrato_agrupar_financeiro_contrato         @default(P)
+  radusuarios                            radusuarios[]
 
   @@index([bairro], map: "bairro")
   @@index([cep], map: "cep")

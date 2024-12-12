@@ -25,9 +25,15 @@ interface Option {
   contract?: number,
 }
 
+interface OptionCliente {
+  id: number;
+  name: string;
+  references?: number;
+}
+
 interface TesteFormProps {
   clientesData: Option[];
-  contratoData: Option[];
+  contratoData: OptionCliente[];
   assuntoData: Option[];
   filialData: Option[];
   departamentoData: Option[];
@@ -36,7 +42,7 @@ interface TesteFormProps {
   atendimentoData: Option[];
   statusData: Option[];
   processoData: Option[];
-  loginData: Option[];
+  loginData: OptionCliente[];
   clientesError: boolean;
   contratoError: boolean;
   assuntoError: boolean;
@@ -95,6 +101,8 @@ export default function TesteForm({
   const [date, setSelectedDate] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
+  const [filteredContratos, setFilteredContratos] = useState<OptionCliente[]>(contratoData);
+  const [filteredLogins, setFilteredLogins] = useState<OptionCliente[]>(loginData);
 
   const [selectedValue, setSelectedValue] = useState('N');
   const [coordenadas, setCoordenadas] = useState({ lat: "", long: "" });
@@ -193,6 +201,25 @@ export default function TesteForm({
     setSelectedDate(event.target.value);
   }
 
+  const handleClienteChange = (cliente: Option) => {
+    setCliente(cliente);
+    if (cliente) {
+      const filteredContrato = contratoData.filter(
+        (contrato) => contrato.references === cliente.id
+      );
+      const filteredLogin = loginData.filter(
+        (login) => login.references === cliente.id
+      );
+      setFilteredContratos(filteredContrato);
+      setFilteredLogins(filteredLogin);
+      setContrato(null); // Reseta o contrato selecionado
+      setLogin(null); // Reseta o contrato selecionado
+    } else {
+      setFilteredContratos(contratoData); // Reseta para mostrar todos os contratos
+      setFilteredLogins(loginData); // Reseta para mostrar todos os contratos
+    }
+  };
+  console.log(filteredContratos);
   return (
     <form onSubmit={handleSubmit}>
 
@@ -235,7 +262,7 @@ export default function TesteForm({
           placeholder="Escolha o cliente"
           initialData={clientesData}
           hasError={clientesError}
-          onChange={(value) => setCliente(value)} 
+          onChange={handleClienteChange} 
           value={cliente?.name || ''}
           />
         </div>
@@ -249,7 +276,7 @@ export default function TesteForm({
         <div className="col-span-2">
           <AutocompleteInput
           placeholder=""
-          initialData={loginData}
+          initialData={filteredLogins}
           hasError={loginError}
           onChange={(value) => setLogin(value)} 
           value={login?.name || ''}
@@ -265,14 +292,10 @@ export default function TesteForm({
         <div className="col-span-2">
           <AutocompleteInput
           placeholder=""
-          initialData={contratoData}
+          initialData={filteredContratos}
           hasError={contratoError}
           onChange={(value) => setContrato(value)} 
-          value={ 
-            contrato?.name || contrato?.id
-              ? `${contrato?.name || ''} - ${contrato?.id || ''}`
-              : ''
-            }
+          value={contrato?.name || ''}
           />
         </div>
       </div>
