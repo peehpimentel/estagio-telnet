@@ -1,5 +1,6 @@
 import { prisma } from "../Libs/prisma";
 import  TesteForm  from '../../components/layout/teste'
+import { error } from "console";
 
 async function getClientes() {
   try {

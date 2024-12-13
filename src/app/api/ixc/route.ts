@@ -5,8 +5,6 @@ export async function POST(req: Request) {
 
   dotenv.config();
 
-
-
   try {
     
   const body = await req.json();
@@ -18,7 +16,7 @@ export async function POST(req: Request) {
     "titulo": body.titulo,
     "prioridade": body.prioridade,
     "menssagem": body.menssagem,
-    "su_status": body.su_status,
+    "interacao_pendente": body.interacao_pendente,
     "id_filial": body.id_filial,
     "origem_endereco": body.origem_endereco,
     "tipo": body.tipo,
@@ -31,6 +29,10 @@ export async function POST(req: Request) {
     "id_responsavel_tecnico": body.id_responsavel_tecnico,
     "id_wfl_processo": body.id_wfl_processo,
     "data_reservada": body.data_reservada,
+    "endereco": body.endereco,
+    "latitude": body.latitude,
+    "longitude": body.longitude,
+    "su_status": "N",
   }
     const url = process.env.SECRET_API!;
     const username = process.env.SECRET_USERNAME;
@@ -52,7 +54,7 @@ export async function POST(req: Request) {
     });
 
     const data = await response.json();
-
+    console.log(response);
     return NextResponse.json(data);
   } catch (error: any) {
     console.error('Error:', error);
@@ -62,12 +64,7 @@ export async function POST(req: Request) {
     );
   }
 }
-
-
-
-
-
-
-
-
-
+// receber o retorno da abert do ticket
+// pegar o id do ticket e consultar as os abertas
+// chamar api com o id da os
+// acrescentar nos paramentos da api o que é necessário (data de inicio do agendamento, msg, técnico de id 1, resposta padrão)

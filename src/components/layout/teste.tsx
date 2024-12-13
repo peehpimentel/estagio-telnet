@@ -1,6 +1,6 @@
 "use client";
 
-import React, { SetStateAction, useState } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import AutocompleteInput from '../common/AutoCompleteInput';
 import { TextInput, Button, Datepicker } from "flowbite-react";
 import RadioGroupPrioridade from '../common/RadioGroupPrioridade';
@@ -98,6 +98,7 @@ export default function TesteForm({
   const [tipo, setTipo] = useState<string>(''); 
   const [enderecoOrigem, setEnderecoOrigem] = useState<string>(''); 
   const [menssagem, setMenssagem] = useState<string>('');
+  const [descricao, setDescricao] = useState<string>('');
   const [date, setSelectedDate] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
@@ -144,10 +145,8 @@ export default function TesteForm({
       !filial || 
       !resposta ||
       !prioridade ||
-      !resposta ||
       !enderecoOrigem ||
       !tipo ||
-      !selectedValue ||
       !horario ||
       !origem ||
       !atendimento ||
@@ -156,7 +155,10 @@ export default function TesteForm({
       !processo ||
       !date ||
       !contrato ||
-      !login
+      !login ||
+      !formattedAddress ||
+      !coordenadas.lat ||
+      !coordenadas.long
     ) {
       alert('Preencha todos os campos antes de enviar.');
       return;
@@ -176,12 +178,12 @@ export default function TesteForm({
       "id_cliente": cliente.id,
       "id_filial": filial.id,
       "id_assunto": assunto.id,
-      "titulo": assunto.name,
+      "titulo": descricao,
       "origem_endereco": enderecoOrigem,
       "prioridade": prioridade,
-      "menssagem": resposta.message,
+      "menssagem": menssagem,
       "tipo": tipo,
-      "su_status": selectedValue,
+      "interacao_pendente": selectedValue,
       "melhor_horario_reserva": horario,
       "id_ticket_origem": origem,
       "id_resposta": resposta.id,
@@ -191,6 +193,10 @@ export default function TesteForm({
       "id_ticket_setor": departamento?.id,
       "id_wfl_processo": processo.id,
       "data_reservada": dataBR,
+      "endereco": formattedAddress,
+      "latitude": coordenadas.lat,
+      "longitude": coordenadas.long,
+      "su_status": "N",
     }  
 
     setIsLoading(true);
@@ -213,13 +219,42 @@ export default function TesteForm({
       setFilteredContratos(filteredContrato);
       setFilteredLogins(filteredLogin);
       setContrato(null); // Reseta o contrato selecionado
-      setLogin(null); // Reseta o contrato selecionado
+      setLogin(null); 
     } else {
       setFilteredContratos(contratoData); // Reseta para mostrar todos os contratos
-      setFilteredLogins(loginData); // Reseta para mostrar todos os contratos
+      setFilteredLogins(loginData); 
     }
-  };
-  console.log(filteredContratos);
+  }
+
+  const handleAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [street, streetNumber, neighborhood, city, state, cep] = e.target.value.split(', ');
+    setCliente({
+      ...cliente,
+      street: street || '', // Atualiza o valor de street
+      streetNumber: streetNumber || '', // Atualiza o valor de streetNumber
+      neighborhood: neighborhood || '', // Atualiza o valor de neighborhood
+      city: city || '', // Atualiza o valor de city
+      state: state || '', // Atualiza o valor de state
+      cep: cep || '', // Atualiza o valor de cep
+    } as Option);
+  };  
+
+  const formattedAddress = cliente?.street || cliente?.streetNumber || cliente?.neighborhood || cliente?.city || cliente?.state || cliente?.cep
+  ? `${cliente?.street || ''}, ${cliente?.streetNumber || ''} - ${cliente?.neighborhood || ''}, ${cliente?.city || ''} - ${cliente?.state || ''} ${cliente?.cep || ''}`
+  : '';
+
+  useEffect(() => {
+    if(resposta?.message) {
+      setMenssagem(resposta.message);
+    }
+  }, [resposta]);
+
+  useEffect(() => {
+    if(assunto?.name) {
+      setDescricao(assunto.name);
+    }
+  }, [assunto]);
+  console.log(selectedValue);
   return (
     <form onSubmit={handleSubmit}>
 
@@ -248,7 +283,8 @@ export default function TesteForm({
           <label htmlFor="protocolo" 
           className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Protocolo: </label>
           <div className="col-span-2">
-            <TextInput className="rounded-md px-0 w-40 bg-gray-800 text-gray-200" maxLength={15} disabled/>
+            <TextInput 
+            className="rounded-md px-0 w-40 bg-gray-800 text-gray-200" maxLength={15} disabled/>
           </div>
       </div> 
       
@@ -332,12 +368,11 @@ export default function TesteForm({
         <label htmlFor="descricao" 
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Descrição do assunto: </label>
         <div className="col-span-2">
-          <AutocompleteInput
-          placeholder=""
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
+          <input
+          type="text"
+          value={descricao}
+          onChange={(event) => setDescricao(event.target.value)}
+          className="w-full p-2 border-1 mb-2 rounded-md focus:outline-none focus:ring-2 bg-gray-800 text-gray-200" 
           />
         </div>
       </div>
@@ -361,23 +396,8 @@ export default function TesteForm({
         >Endereço: </label>
       <div className="col-span-2 flex">
         <input
-          value={ 
-            cliente?.street || cliente?.streetNumber || cliente?.neighborhood || cliente?.city || cliente?.state || cliente?.cep
-              ? `${cliente?.street || ''}, ${cliente?.streetNumber || ''} - ${cliente?.neighborhood || ''}, ${cliente?.city || ''} - ${cliente?.state || ''} ${cliente?.cep || ''}`
-              : ''
-            }
-          onChange={(e) => {
-            const [street, streetNumber, neighborhood, city, state, cep] = e.target.value.split(', '); // Divide os valores por vírgula e espaço
-            setCliente({
-              ...cliente,
-              street: street || '', // Atualiza o valor de street
-              streetNumber: streetNumber || '',     // Atualiza o valor de streetNumber
-              neighborhood: neighborhood || '',   // Atualiza o valor de neighborhood
-              city: city || '',   // Atualiza o valor de city
-              state: state || '',   // Atualiza o valor de state
-              cep: cep || '',   // Atualiza o valor de cep
-            } as Option);
-          }}
+          value={formattedAddress}
+          onChange={handleAddress}
           id="endereco"
           type="text"
           className="flex-grow rounded-l-lg bg-gray-800 text-gray-200 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -515,7 +535,7 @@ export default function TesteForm({
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Descrição: </label>
         <div className="col-span-2">
         <textarea
-          value={resposta?.message}
+          value={menssagem}
           onChange={(event) => setMenssagem(event.target.value)}
           rows={4}
           maxLength={2147483647}
