@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     "longitude": body.longitude,
     "su_status": "N",
   }
-    const url = process.env.SECRET_API!;
+    const url = `${process.env.SECRET_API}/su_ticket`!;
     const username = process.env.SECRET_USERNAME;
     const password = process.env.SECRET_KEY;
     const encodedToken = Buffer.from(`${username}:${password}`).toString('base64');
@@ -55,7 +55,14 @@ export async function POST(req: Request) {
 
     const data = await response.json();
     console.log(response);
-    return NextResponse.json(data);
+
+    const result = {
+      id: data.id,
+      menssagem: param.menssagem,
+      data_reservada: param.data_reservada,
+    };
+
+    return NextResponse.json(result);
   } catch (error: any) {
     console.error('Error:', error);
     return NextResponse.json(

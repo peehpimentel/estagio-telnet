@@ -410,6 +410,7 @@ model su_ticket {
   tipo                      su_ticket_tipo?                      @default(C)
   id_estrutura              Int?
   origem_endereco_estrutura su_ticket_origem_endereco_estrutura?
+  su_oss_chamado            su_oss_chamado[]
 
   @@index([data_reservada], map: "data_reservada")
   @@index([id_assunto], map: "id_assunto")
@@ -1114,6 +1115,7 @@ model su_oss_chamado {
   data_final                 DateTime?                                  @db.DateTime(0)
   impresso                   su_oss_chamado_impresso                    @default(N)
   id_ticket                  Int?
+  ticketID                   su_ticket?                                 @relation(fields: [id_ticket], references:[id])
   id_cobranca                Int?
   id_oss_chamado             Int?
   data_hora_analise          DateTime?                                  @db.DateTime(0)

@@ -1,51 +1,49 @@
 "use client";
 
-import { SetStateAction, useState } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import AutocompleteInput from '../common/AutoCompleteInput';
-import { TextInput, Button, Datepicker } from "flowbite-react";
-import RadioGroupPrioridade from '../common/RadioGroupPrioridade';
-import RadioGroupEndereco from '../common/RadioGroupEndereco';
-import RadioGroupHorario from '../common/RadioGroupHorario';
-import RadioGroupOrigem from '../common/RadioGroupOrigem';
-import RadioGroupTipo from '../common/RadioGroupTipo';
 
 interface Option {
   id: number;
   name: string;
+  references?: number;
 }
 
 interface TicketFormProps {
   clientesData: Option[];
-  assuntoData: Option[];
+  funcionariosData: Option[];
+  respostaData: Option[];
+  ticketsData: Option[];
   clientesError: boolean;
-  assuntoError: boolean;
+  funcionariosError: boolean;
+  respostaError: boolean;
+  ticketsError: boolean;
 }
 
 export default function TicketForm({
   clientesData,
-  assuntoData,
+  funcionariosData,
+  respostaData,
+  ticketsData,
   clientesError,
-  assuntoError,
+  respostaError,
+  funcionariosError,
+  ticketsError,
+
 }: TicketFormProps) {
-
   const [cliente, setCliente] = useState<Option | null>(null);
-  const [assunto, setAssunto] = useState<Option | null>(null);
-  const [prioridade, setPrioridade] = useState<string>(''); 
+  const [ticket, setTicket] = useState<Option | null>(null);
+  const [funcionarios, setFuncionarios] = useState<Option | null>(null);
+  const [resposta, setResposta] = useState<Option | null>(null);
   const [horario, setHorario] = useState<string>(''); 
-  const [origem, setOrigem] = useState<string>(''); 
-  const [tipo, setTipo] = useState<string>(''); 
-  const [endereco, setEndereco] = useState<string>(''); 
   const [menssagem, setMenssagem] = useState<string>('');
+  const [date, setSelectedDate] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedValue, setSelectedValue] = useState('N');
-
-  const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
-    setSelectedValue(event.target.value);
-  };
-
+  const [filteredTickets, setFilteredTickets] = useState<Option[]>(ticketsData);
+  
   const submitData = async (payload: any) => {
     try {
-      const response = await fetch('/api/ixc', {
+      const response = await fetch('/api/os', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,360 +62,161 @@ export default function TicketForm({
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!cliente || !assunto || !prioridade || !menssagem || endereco) {
+    if (
+      !cliente || 
+      !resposta ||
+      !horario ||
+      !funcionarios ||
+      !date
+    ) {
       alert('Preencha todos os campos antes de enviar.');
       return;
     }
 
+    function formatDateToBR(dateUS: string){
+      const [year, month, day] = dateUS.split('-');
+      return `${day}/${month}/${year}`
+    }
+  
+    const dataUS = date;
+    const dataBR = formatDateToBR(dataUS);
+
     const payload = {
-      "id_cliente": cliente.id,
-      "id_assunto": assunto.id,
-      "prioridade": prioridade,
       "menssagem": menssagem,
-      "tipo": "C",
-      "titulo": "Teste API",
-      "id_ticket_setor": "5",
-      "su_status": "N",
-      "origem_endereco": endereco
-    };
-    console.log(payload);
-    
+      "melhor_horario_reserva": horario,
+      "id_resposta": resposta.id,
+      "id_responsavel_tecnico": "1",
+      "data_reservada": dataBR,
+      "id_cliente": cliente.id,
+    }  
 
     setIsLoading(true);
     submitData(payload);
-  };
+  }
+
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedDate(event.target.value);
+  }
+
+  const funcionarioSelecionado = funcionariosData.find(
+    (funcionario) => funcionario.id === 1
+  );
+
+  const handleClienteChange = (cliente: Option) => {
+    setCliente(cliente);
+    if (cliente) {
+      const FilteredTickets = ticketsData.filter(
+        (tickets) => tickets.references === cliente.id
+      );
+      setFilteredTickets(FilteredTickets);
+      setTicket(null); 
+    } else {
+      setFilteredTickets(ticketsData); 
+    }
+  }
 
   return (
-    <form onSubmit={handleSubmit} >
+  <form onSubmit={handleSubmit}>
+  <div className="grid gap-2 w-full max-w-lg mx-auto">
 
-    <div className="grid gap-2 w-full max-w-lg mx-auto">
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-          <label htmlFor="id_ticket" 
-          className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">ID: </label>
-          <div className="col-span-2">
-            <TextInput className="rounded-md px-0 w-24 bg-gray-800 text-gray-200" maxLength={11} disabled/>
-          </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="origem" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Tipo: </label>
-        <div className="col-span-2">
-          <RadioGroupTipo 
-          value={tipo}
-          onChange={setTipo} 
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-          <label htmlFor="protocolo" 
-          className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Protocolo: </label>
-          <div className="col-span-2">
-            <TextInput className="rounded-md px-0 w-40 bg-gray-800 text-gray-200" maxLength={15} disabled/>
-          </div>
-      </div>
-      
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="cliente" 
-        className="text-md font-medium text-gray-300 
-        whitespace-nowrap justify-self-end text-right">Cliente: 
-        </label>
-        <div className="col-span-2">
-          <AutocompleteInput
-          placeholder="Escolha o cliente"
-          initialData={clientesData}
-          hasError={clientesError}
-          onChange={(value) => setCliente(value)} 
-          value={cliente?.name || ''}
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="filial" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Filial: </label>
-        <div className="col-span-2">
-          <AutocompleteInput
-          placeholder="Escolha a filial"
-          initialData={clientesData}
-          hasError={clientesError}
-          onChange={(value) => setCliente(value)} 
-          value={cliente?.name || ''} 
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="assunto" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Assunto: </label>
-        <div className="col-span-2">
-          <AutocompleteInput
-          placeholder="Escolha o assunto"
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="descricao" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Descrição do assunto: </label>
-        <div className="col-span-2">
-          <AutocompleteInput
-          placeholder=""
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="origem-endereco" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Origem do endereço: </label>
-        <div className="col-span-2">
-          <RadioGroupEndereco
-            value={endereco}
-            onChange={setPrioridade} 
-          />
-        </div>  
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">
-        <label
-          htmlFor="endereco"
-          className="text-md font-medium text-gray-300 
-          whitespace-nowrap justify-self-end text-right"
-        >Endereço: </label>
-      <div className="col-span-2 flex">
-        <input
-          id="endereco"
-          type="text"
-          className="flex-grow rounded-l-lg bg-gray-800 text-gray-200 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <Button
-          color="blue"
-          className="rounded-l-none px-0 bg-blue-600 text-white hover:bg-blue-700 focus:outline-none whitespace-nowrap"
-        >Marcar coordenadas</Button>
-      </div>
+  <div className="grid grid-cols-3 items-center gap-5">      
+    <label htmlFor="cliente" 
+    className="text-md font-medium text-gray-300 
+    whitespace-nowrap justify-self-end text-right">ID O.S: 
+    </label>
+    <div className="col-span-2">
+      <AutocompleteInput
+      placeholder="Escolha a O.S"
+      initialData={filteredTickets}
+      hasError={ticketsError}
+      onChange={(value) => setTicket(value)} 
+      value={ticket?.name || ''}
+      />
     </div>
+  </div>
 
-        <div className="mt-1.5 mb-1.5 grid grid-cols-3 items-center gap-5">      
-          <label htmlFor="latitude" 
-          className="text-md font-medium text-gray-300 
-          whitespace-nowrap justify-self-end text-right">Latitude: 
-          </label>
-          <div className="col-span-2">
-            <TextInput className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
-          </div>
-        </div>
-
-        <div className="mb-1.5 grid grid-cols-3 items-center gap-5">      
-          <label htmlFor="longitude" 
-          className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Longitude: </label>
-          <div className="col-span-2">
-            <TextInput className="rounded-md bg-gray-800 text-gray-200" maxLength={50} disabled/>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 items-center gap-5">      
-          <label htmlFor="processo" 
-          className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Processo: </label>
-          <div className="col-span-2">
-            <AutocompleteInput
-            initialData={assuntoData}
-            hasError={assuntoError}
-            onChange={(value) => setAssunto(value)} 
-            value={assunto?.name || ''} 
-            />
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-3 items-center gap-5">      
-          <label htmlFor="departamento" 
-          className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Departamento: </label>
-          <div className="col-span-2">
-            <AutocompleteInput
-            initialData={assuntoData}
-            hasError={assuntoError}
-            onChange={(value) => setAssunto(value)} 
-            value={assunto?.name || ''} 
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 items-center gap-5">      
-          <label htmlFor="colaborador" 
-          className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Colaborador responsável: </label>
-          <div className="col-span-2">
-            <AutocompleteInput
-            initialData={assuntoData}
-            hasError={assuntoError}
-            onChange={(value) => setAssunto(value)} 
-            value={assunto?.name || ''} 
-            />
-          </div>
-        </div>
-        
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="prioridade" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Prioridade: </label>
-        <div className="col-span-2">
-          <RadioGroupPrioridade 
-          value={prioridade}
-          onChange={setEndereco} 
-          />
-        </div> 
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="data-reservada" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Data reservada: </label>
-        <div className="col-span-2">
-          <input type="date" name="date" id="date" className="border rounded-md shadow-sm
-         focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200"/>
-        </div>
+  <div className="grid grid-cols-3 items-center gap-5">      
+    <label htmlFor="cliente" 
+    className="text-md font-medium text-gray-300 
+    whitespace-nowrap justify-self-end text-right">Cliente: 
+    </label>
+    <div className="col-span-2">
+      <AutocompleteInput
+      placeholder="Escolha o cliente"
+      initialData={clientesData}
+      hasError={clientesError}
+      onChange={handleClienteChange} 
+      value={cliente?.name || ''}
+      />
     </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="horario" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Melhor horário reserva: </label>
-        <div className="col-span-2">
-          <RadioGroupHorario 
-          value={horario}
-          onChange={setHorario} 
-          />
-        </div> 
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="origem" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Origem: </label>
-        <div className="col-span-2">
-          <RadioGroupOrigem 
-          value={origem}
-          onChange={setOrigem} 
-          />
-        </div>
-      </div>
+  </div>
 
     <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="resposta-padrao" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Resposta padrão: </label>
-        <div className="col-span-2">
-          <AutocompleteInput
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="descricao-mensagem" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Descrição: </label>
-        <div className="col-span-2">
-          <textarea
-            value={menssagem}
-            onChange={(e) => setMenssagem(e.target.value)}
-            rows={4}
-            maxLength={2147483647}
-            cols={100}
-            className="w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200"
-          />
-        </div>
-      </div>
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="interacao" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Interação pendente: </label>
-        <div className="col-span-2">
-          <select value={selectedValue} onChange={handleChange} name="interacao_pendente" id="interacao_pendente" autoComplete="off" className="mb-1.5 mt-1.5 border rounded-md shadow-sm bg-gray-800 text-gray-200">
-            <option value="">---</option>
-            <option value="A">Ambos</option>
-            <option value="E">Externa</option>
-            <option value="I">Interna</option>
-            <option value="N">Nenhuma</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="status" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Status: </label>
-          <Button.Group className="cols-span-full mb-2">
-            <Button className="bg-blue-600 text-white" disabled aria-selected>
-              Novo
-            </Button>
-            <Button className="bg-gray-800 text-gray-200" disabled>
-              Pendente
-            </Button>
-            <Button className="bg-gray-800 text-gray-200 whitespace-nowrap" disabled>
-              Em progresso
-            </Button>
-            <Button className="bg-gray-800 text-gray-200" disabled>
-              Solucionado
-            </Button>
-            <Button className="bg-gray-800 text-gray-200" disabled>
-              Cancelado
-            </Button>
-          </Button.Group>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="status-complementar" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Status complementar: </label>
-        <div className="col-span-2">
-          <AutocompleteInput
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="canal-atendimento" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Canal de atendimento: </label>
-        <div className="col-span-2">
-          <AutocompleteInput
-          initialData={assuntoData}
-          hasError={assuntoError}
-          onChange={(value) => setAssunto(value)} 
-          value={assunto?.name || ''} 
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-3 items-center gap-5">      
-        <label htmlFor="ultima-atualizacao" 
-        className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Última atualização: </label>
-        <div className="col-span-2">
-          <Datepicker placeholder="CURRENT_TIMESTAMP" language="pt-BR" labelTodayButton="Hoje" labelClearButton="Limpar"  className="rounded-md bg-gray-800 text-gray-200" disabled/>
-        </div>
+      <label htmlFor="colaborador" 
+      className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Colaborador responsável: </label>
+      <div className="col-span-2">
+        <AutocompleteInput
+        initialData={funcionariosData}
+        hasError={funcionariosError}
+        onChange={(value) => setFuncionarios(value)} 
+        value={funcionarioSelecionado?.name || ''} 
+        />
       </div>
     </div>
-    <div className="grid grid-cols-3 items-center gap-2">
+    
+  <div className="grid grid-cols-3 items-center gap-5">      
+    <label htmlFor="data-reservada" 
+    className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Data reservada: </label>
+    <div className="col-span-2">
+      <input type="date" name="date" id="date" className="border rounded-md shadow-sm
+      focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200" value={date} onChange={handleDateChange}/>
+    </div>
+</div>
+
+<div className="grid grid-cols-3 items-center gap-5">      
+    <label htmlFor="resposta-padrao" 
+    className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Resposta padrão: </label>
+    <div className="col-span-2">
+      <AutocompleteInput
+      initialData={respostaData}
+      hasError={respostaError}
+      onChange={(value) => setResposta(value)} 
+      value={resposta?.name || ''} 
+      />
+    </div>
+  </div>
+
+  <div className="grid grid-cols-3 items-center gap-5">      
+    <label htmlFor="descricao-mensagem" 
+    className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Descrição: </label>
+    <div className="col-span-2">
+    <textarea
+      value={menssagem}
+      onChange={(event) => setMenssagem(event.target.value)}
+      rows={4}
+      maxLength={2147483647}
+      cols={100}
+      className="w-full border rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200"
+    />
+    </div>
+  </div>
+  <div className="grid grid-cols-3 items-center gap-2">
       <div className="col-span-3">
         <button
-            type="submit"
-            disabled={isLoading}
-            className="mt-4 mb-4 w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+          type="submit"
+          disabled={isLoading}
+          className="mt-4 mb-4 w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
         >
-            {isLoading ? 'Enviando...' : 'Enviar'}
+          {isLoading ? 'Enviando...' : 'Enviar'}
         </button>
       </div>
     </div>
-    </form>
+  </div>
+  </form>
   );
 }

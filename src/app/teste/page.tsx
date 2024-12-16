@@ -319,6 +319,39 @@ async function getLogin() {
   }
 }
 
+async function getTicketId() {
+  try {
+    const result = await prisma.su_oss_chamado.findMany({
+      where: {
+        status: 'A',
+      },
+      select: {
+        id: true,
+        ticketID: {
+          select: {
+            id: true,
+        },
+      },
+        mensagem: true,
+      },
+    });
+    return {
+      data: result.map(result => ({
+        id: result.id,
+        name: result.mensagem,
+        references: result.ticketID?.id,
+      })),
+      error: false
+    };
+  } catch (error) {
+    console.error('Erro ao buscar o ticket:', error);
+    return {
+      data: [],
+      error: true
+    };
+  }
+}
+
 interface Option {
   id: number;
   name: string;
