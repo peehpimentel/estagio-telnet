@@ -1,0 +1,268 @@
+App
+|
+cadastro
+|
+page.tsx
+
+"use client";
+
+import { Button, Textarea, Label, Radio } from "flowbite-react";
+import { Search } from 'lucide-react';
+import React, { useEffect, useRef, useState } from "react";
+import consultaClientes from '../Libs/consultaCliente'
+
+type Cliente = {
+    id: number;
+    razao: string;
+};
+
+export default function SearchDropdown() {
+    const wrapperRef = useRef(null);
+    const wrapperRef2 = useRef(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm2, setSearchTerm2] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen2, setIsOpen2] = useState(false);
+    const [idClientes, setIdClientes] = useState<{ id: string; nome: string }[]>([]);    
+    const [filteredIdClientes, setFilteredIdClientes] = useState<{ id: string; nome: string }[]>([]);
+    const id_assunto = [
+        { id: '1', label: 'Assunto 1' },
+        { id: '2', label: 'Assunto 2' },
+        { id: '3', label: 'Assunto 3' },
+        { id: '47', label: 'Assunto 47' },
+        { id: '103', label: 'Assunto 103' }
+    ];
+ 
+    const [filteredIdAssunto, setFilteredIdAssunto] = useState(id_assunto);
+
+
+    useEffect(() =>{
+        const fetchDataCliente = async () => {
+            const res = await consultaClientes();
+            const id_cliente = console.log(res);
+        };
+
+        fetchDataCliente();
+    },[])
+
+
+
+    // Função para buscar dados do servidor
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch('../api/ixc'); // Endpoint para buscar os clientes
+                const data: Cliente[] = await response.json();
+                const formattedData = data.map(cliente => ({
+                    id: cliente.id.toString(),
+                    nome: cliente.razao
+                }));
+                setIdClientes(formattedData);
+            } catch (error) {
+                console.error("Erro ao buscar clientes:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // Filtros
+    useEffect(() => {
+        setFilteredIdClientes(
+            idClientes.filter(item =>
+                item.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.id.includes(searchTerm)
+            )
+        );
+    }, [searchTerm, idClientes]);
+
+    useEffect(() => {
+        setFilteredIdAssunto(
+            id_assunto.filter(item =>
+                item.label.toLowerCase().includes(searchTerm2.toLowerCase()) ||
+                item.id.includes(searchTerm2)
+            )
+        );
+    }, [searchTerm2]);
+
+    // Lógica para fechar dropdown ao apertar ESC
+    const handleKeyPress = (event: { key: string; }) => {
+        if(event.key === "Escape"){
+            setIsOpen(false);
+            setIsOpen2(false);
+        }
+    };
+
+    // Lógica para fechar dropdown ao clicar fora
+    function useOutsideAlerter(ref: React.RefObject<HTMLElement>, closeDropdown: () => void) {
+        useEffect(() => {
+            function handleClickOutside(event: MouseEvent) {
+                if (ref.current && !ref.current.contains(event.target as Node)) {
+                    closeDropdown();
+                }
+            }
+
+            document.addEventListener("mousedown", handleClickOutside);
+            document.addEventListener("keydown", handleKeyPress);
+            return () => {
+                document.removeEventListener("mousedown", handleClickOutside);
+                document.removeEventListener("keydown", handleKeyPress);
+            };
+        }, [ref, closeDropdown]);
+    }
+
+    useOutsideAlerter(wrapperRef, () => setIsOpen(false));
+    useOutsideAlerter(wrapperRef2, () => setIsOpen2(false));
+
+    return (
+        <form className="w-screen h-screen flex flex-col justify-center items-center">
+            <div className="relative w-64 mb-2" ref={wrapperRef}>
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder="Buscar clientes..."
+                        value={searchTerm}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setIsOpen(true);
+                        }}
+                        onClick={() => setIsOpen(true)}
+                        className="w-full bg-gray-800 text-gray-200 px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500"
+                    />
+                    <Search
+                        className="absolute right-3 top-2.5 text-gray-400"
+                        size={18}
+                    />
+                </div>
+                {isOpen && (
+                    <div className="absolute w-full mt-1 bg-gray-800 border border-gray-700 rounded shadow-lg max-h-60 overflow-auto z-50">
+                        {filteredIdClientes.map((item) => (
+                            <div
+                                key={item.id}
+                                className="flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer"
+                                onClick={() => {
+                                    setSearchTerm(item.nome);
+                                    setIsOpen(false);
+                                }}
+                            >
+                                <span className="w-12 text-gray-400">{item.id}</span>
+                                <span className="text-gray-200">{item.nome}</span>
+                            </div>
+                        ))}
+                        {filteredIdClientes.length === 0 && (
+                            <div className="px-4 py-2 text-gray-400">Nenhum resultado encontrado</div>
+                        )}
+                    </div>
+                )}
+            </div>
+            <div className="relative w-64 mb-2" ref={wrapperRef2}>
+                <input
+                    type="text"
+                    placeholder="Buscar assunto..."
+                    value={searchTerm2}
+                    onChange={(e) => setSearchTerm2(e.target.value)}
+                    onClick={() => setIsOpen2(true)}
+                    className="w-full bg-gray-800 text-gray-200 px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500"
+                />
+                {isOpen2 && (
+                    <div className="absolute w-full mt-1 bg-gray-800 border border-gray-700 rounded shadow-lg max-h-60 overflow-auto z-50">
+                        {filteredIdAssunto.map((item) => (
+                            <div
+                                key={item.id}
+                                className="flex items-center px-4 py-2 hover:bg-gray-700 cursor-pointer"
+                                onClick={() => {
+                                    setSearchTerm2(item.label);
+                                    setIsOpen2(false);
+                                }}
+                            >
+                                <span className="w-12 text-gray-400">{item.id}</span>
+                                <span className="text-gray-200">{item.label}</span>
+                            </div>
+                        ))}
+                        {filteredIdAssunto.length === 0 && (
+                            <div className="px-4 py-2 text-gray-400">Nenhum resultado encontrado</div>
+                        )}
+                    </div>
+                )}
+            </div>
+            <input placeholder="Título" type="text" className="relative w-64 mb-2 bg-gray-800 text-gray-200 px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500 " />
+            <input placeholder="Setor" type="text" className="relative w-64 mb-2 bg-gray-800 text-gray-200 px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500 " />
+            <Textarea id="comment" placeholder="Sua mensagem..." required rows={4} className="relative w-64 mb-2 bg-gray-800 text-gray-200 px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500" />
+            <fieldset className="relative w-64 mb-2 bg-gray-800 text-gray-200 px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-blue-500 ">
+                <div className="flex items-center gap-2">
+                    <legend>Prioridade: </legend>
+                    <Radio id="baixa" name="prioridade" value="B" />
+                    <Label htmlFor="baixa" className="text-gray-200">Baixa</Label>
+                    <Radio id="normal" name="prioridade" value="N" />
+                    <Label htmlFor="normal" className="text-gray-200">Normal</Label>
+                    <Radio id="alta" name="prioridade" value="A" />
+                    <Label htmlFor="alta" className="text-gray-200">Alta</Label>
+                </div>
+            </fieldset>
+            <Button color="dark" type="submit" className="mb-2">Buscar</Button>
+        </form>
+    );
+}
+
+Api
+|
+IXC
+|
+route.ts
+
+import { error } from "console";
+import { NextResponse } from 'next/server';
+
+export const GET = async () => {
+    try {
+        const apiResp = await fetch("https://179.191.12.8/webservice/v1/su_ticket");
+        if (!apiResp.ok) {
+            throw new Error('Erro ao buscar dados da API externa');
+        }
+        const data = await apiResp.json(); //espera a api acessar o json
+        if(data.error){
+            return new Response(JSON.stringify({ error: "ERROR 404" }), {
+            status: 404,
+            headers: {"Content-type": "application/json"}, //estou dizendo que o conteúdo que estou passando é do tipo json
+            });
+        }
+        return new Response(JSON.stringify(data), {
+            status: 200,
+            headers: {"Content-type": "application/json"},
+        });
+        
+    } catch (error) {
+        return new Response(JSON.stringify({ error: "ERROR 500" }), {
+            status: 500,
+            headers: {"Content-type": "application/json"},
+        });
+    }
+}
+
+
+App
+|
+Libs
+|
+consultaClientes.ts
+
+consultaClientes.ts
+
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+export default async function consultaCliente()  {
+    const clientes = await prisma.cliente.findMany({
+        select: {
+            id: true,
+            razao: true,
+        },
+    }); 
+    if(!clientes){
+        return new Response(JSON.stringify({ error: "Erro ao conectar usando Prisma Client: "}), {
+        status: 400,
+        headers: {"Content-type": "application/json"},
+        });
+    }
+    return(clientes);
+}

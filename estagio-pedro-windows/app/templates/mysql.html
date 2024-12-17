@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <title>Dados simples</title>
+</head>
+<body>
+    <h1>Dados do Banco de Dados</h1>
+    <!-- Criar form POST e remover JS-->
+    <div class="checkbox-group">
+        <form method="POST" id="checkbox-group-db">
+            {% csrf_token %}
+            <input type="checkbox" name="filial" id="1" value="1" {% if "1" in id_filial %}checked{% endif %}>
+            <label for="tres-lagoas">Três Lagoas</label><br>
+            <input type="checkbox" name="filial" id="11" value="11" {% if "11" in id_filial %}checked{% endif %}>
+            <label for="selviria">Selvíria</label><br>
+            <input type="checkbox" name="filial" id="15" value="15" {% if "15" in id_filial %}checked{% endif %}>
+            <label for="andradina">Andradina</label><br>
+            <input type="text" placeholder="Pesquisar..." name="search" value="{{ search_query }}">
+            <input type="submit" value="Enviar"><br><br>
+        </form>
+    </div>
+
+    {% if resultados %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID Cliente</th>         
+                <th>Nome Cliente</th>         
+                <th>ID Contrato</th>         
+                <th>Contrato</th>         
+                <th>Assunto</th>         
+                <th>ID O.S</th>         
+                <th>Data Abertura O.S</th>         
+                <th>Última ATT O.S</th>         
+                <th>Status</th>         
+                <th>ID Cidade</th>         
+                <th>Cidade</th>         
+            </tr> 
+        </thead>
+        <tbody id="clientes_telnet">
+            {% for resultado in resultados %}
+            <tr>
+                <td>{{ resultado.0 }}</td>
+                <td>{{ resultado.1 }}</td>
+                <td>{{ resultado.2 }}</td>
+                <td>{{ resultado.3 }}</td>
+                <td>{{ resultado.4 }}</td>
+                <td>{{ resultado.5 }}</td>
+                <td>{{ resultado.6 }}</td>
+                <td>{{ resultado.7 }}</td>
+                <td>{{ resultado.8 }}</td>
+                <td>{{ resultado.9 }}</td>
+                <td>{{ resultado.10 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Resultado não encontrado.</p>
+    {% endif %}
+
+</body>
+</html>

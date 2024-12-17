@@ -1,0 +1,99 @@
+
+22/10/24 - procurar negociações que foram feitas a partir de 01/10/24 e que tenham algum ticket junto a data de negociação
+
+crm_negociacoes
+su_ticket
+su_oss_assunto
+
+23/10/24 - quais clientes tem um ou mais contratos antes da negociação
+
+SABER QUANTAS FATURAS PAGAS OS CLIENTES TEM, SE TIVER 0 SÓ COLOCAR COMO NÃO PAGO, SENÃO, COLOCAR A QUANTIDADE PAGA
+
+fn_areceber
+
+A - A receber
+P - Parcelado
+C - Cancelado 
+R - Recebido
+
+24/10/24 - consultar o total de recebimento por cliente e aplicar um cálculo para ver o total de tarifa 
+
+tarifa de pagamento  1,11 (boleto) ok
+tarifa de baixa 1,08 (boleto) ok
+tarifa 0,40 ok
+
+ 
+fn.id_carteira_cobranca (1, 3, 4, 33, 34) - boleto ok
+OR fn.id_carteira_cobranca (38, 41, 42, 43, 44, 47) - pix ok
+
+fn.filial_id NOT IN (0, 2, 3, 4, 16, 17) ok
+
+fn_movim_finan fnf - id_receber ok
+fn_areceber fn ok
+
+fnf.tipo_recebimento in ('B', 'P')
+
+fn_areceber_alt_carteira.id_carteira_old
+
+RECEBIMENTO     OLD     NEW
+B		B	B
+P		P	P
+O
+
+25/10/24
+
+contas.id = rec.conta_
+
+forma de recebimento (manual/automatico)
+carteira recebida
+tipo de pagamento recebida
+carteira antiga
+carteira nova
+tipo de conta (caixa/banco)
+
+28/10/24
+
+
+caso 0 é quando o pagamento é em dinheiro e carteira pix
+
+29/10/24
+
+trazer o nome do cliente,
+
+query salva tempo total 13.353
+query n salva tempo total 13.434
+
+31/10/24
+
+alterar a query de tarifas e tirar as carteiras olds e news e começar a utilizar a tabela e os campos de retorno e remessa de boletos.
+
+
+05/11/24
+
+
+ixc_logs - grava a data e o user que acessou o sistemas
+fazer uma uniao entre essa tabela e a tabela usuarios e fazer uma query para buscar os users que n tiveram acesso nos ultimos 6 meses
+
+fazer uma lista mesmo com o users com valores nulos ou 0
+
+06/11/24
+
+log_acesso - operador = id user... data acesso para intervalo de 6 meses - mesma consulta que o dia anterior
+
+08/11/24
+
+para segunda feira - teste de consumo de api básico, utilizando o cep. o usuário digita o cep e a api busca automaticamente. mostrar registro diferente em caso de erro e os registros trazer em um json.
+
+12/11/24
+consumo da api do ixc utilizando post para executar comandos. form id cliente menu dropdown para selecionar os clientes e um campo para digitar o id, id assunto menu dropdown para selecionar o assunto e um campo para digitar o id, titulo, setor, prioridade checkbox para escolher um por vez, msg campo de texto
+
+14/11/24 CONTINUAR A CONFIGURAR O BANCO DE DADOS E OS ERROS DO PRISMA COM NPX PRISMA GENERATE
+
+
+18/11/24 uninstall no prisma, reinstalar.
+
+22/11/24 verificar o erro que está dando depois de adicionar o campo de assunto.
+
+25/11/24 adicionar o botão e a tratativa do formulário dentro da pasta layout, no arquivo button.tsx
+
+O arquivo button.tsx tem que "renderizar" tudo recebido pelo prisma e depois enviar para o arquivo AutoCompletoInput
