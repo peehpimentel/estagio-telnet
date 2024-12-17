@@ -9,6 +9,62 @@ export async function POST(req: Request) {
     
   const body = await req.json();
   const param = {
+    //  "tipo": "C"
+    // ,"id_estrutura": ''
+    // ,"protocolo": 202412108757
+    // ,"id_circuito": ''
+    // ,"id_cliente": 23097
+    // ,"id_login": 34592
+    // ,"id_contrato": 34872
+    // ,"id_filial": 1
+    // ,"id_assunto": 117
+    // ,"titulo": "SEM CONEXÃO"
+    // ,"origem_endereco": "L"
+    // ,"origem_endereco_estrutura": "E"
+    // ,"endereco": "MS Três Lagoas 79642-176 NOVA EUROPA  - João Farid Zogbi, 1895"
+    // ,"latitude": -20.79091123155786
+    // ,"longitude": -51.71255986126845
+    // ,"id_wfl_processo": 27
+    // ,"id_ticket_setor": 5
+    // ,"id_responsavel_tecnico": 18966
+    // ,"data_criacao": ''
+    // ,"data_ultima_alteracao": ''
+    // ,"prioridade": "M"
+    // ,"data_reservada": ''
+    // ,"melhor_horario_reserva": "Q"
+    // ,"id_ticket_origem": "I"
+    // ,"id_usuarios": 62
+    // ,"id_resposta": 7
+    // ,"menssagem": "PEDIDO DE MANUTENÇÃO Canal de Atendimento - Protocolo - Relato do Cliente - Sinal de potência da fibra (db) - Observação - Contato -  "
+    // ,"interacao_pendente": "I"
+    // ,"su_status": "N"
+    // ,"id_evento_status_processo": ''
+    // ,"id_canal_atendimento": ''
+    // ,"status": "T"
+    // ,"mensagens_nao_lida_cli": 0
+    // ,"mensagens_nao_lida_sup": 0
+    // ,"token": ''
+    // ,"finalizar_atendimento": "N"
+    // ,"id_su_diagnostico": ''
+    // ,"status_sla": ''
+    // ,"origem_cadastro": "P"
+    // ,"ultima_atualizacao": "CURRENT_TIMESTAMP"
+    // ,"cliente_fone": ''
+    // ,"cliente_telefone_comercial": ''
+    // ,"cliente_id_operadora_celular": 0
+    // ,"cliente_telefone_celular": "(18) 99152-8771"
+    // ,"cliente_whatsapp": "(18) 99152-8771"
+    // ,"cliente_ramal": ''
+    // ,"cliente_email": ''
+    // ,"cliente_contato": ''
+    // ,"cliente_website": ''
+    // ,"cliente_skype": ''
+    // ,"cliente_facebook": ''
+    // ,"latitude_cli": -20.79091123155786
+    // ,"longitude_cli": -51.71255986126845
+    // ,"latitude_login": -20.79091123155786
+    // ,"longitude_login": -51.71255986126845
+
     "id_login": body.id_login,
     "id_contrato": body.id_contrato,
     "id_cliente": body.id_cliente,
@@ -33,6 +89,8 @@ export async function POST(req: Request) {
     "latitude": body.latitude,
     "longitude": body.longitude,
     "su_status": "N",
+    // "protocolo": 202412108760,
+    "ultima_atualizacao": "CURRENT_TIMESTAMP"
   }
     const url = `${process.env.SECRET_API}/su_ticket`!;
     const username = process.env.SECRET_USERNAME;

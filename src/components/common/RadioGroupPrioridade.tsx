@@ -14,7 +14,7 @@ interface RadioGroupPrioridadeProps {
         <div className="flex items-center space-x-2">
             <RadioGroupItem value="b" id="r1" name="priority-group"/>
             <Label htmlFor="r1">Baixa</Label>
-            <RadioGroupItem value="n" id="r2" name="priority-group"/>
+            <RadioGroupItem value="m" id="r2" name="priority-group"/>
             <Label htmlFor="r2">Normal</Label>
             <RadioGroupItem value="a" id="r3" name="priority-group"/>
             <Label htmlFor="r3">Alta</Label>
