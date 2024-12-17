@@ -1,20 +1,32 @@
 import { NextResponse } from 'next/server';
-import * as dotenv from 'dotenv'
-dotenv.config();
+import * as dotenv from 'dotenv';
+import { prisma } from '@/app/Libs/prisma';
 
 export async function POST(req: Request) {
+  dotenv.config();
 
   try {
-    
-  const body = await req.json();
-  const param = {
-    // "id_resposta": body.id_resposta,
-    "data_agendamento": body.data_reservada,
-    "mensagem": body.menssagem,
-    "status": "AG",
-    "id_tecnico": "1",
-    "id_chamado": " ",
-  }
+    const body = await req.json();
+
+    // Parâmetros que vêm do body
+    const { id, menssagem, data_reservada } = body;
+
+    const existingRecord = await prisma.su_oss_chamado.findFirst({
+      where: {
+        id_ticket: body.id
+      }
+    })
+
+
+
+    const param = {
+      id_chamado: id, // Renomeado conforme necessário
+      mensagem: menssagem,
+      data_agendamento: data_reservada,
+      status: 'AG',
+      id_tecnico: '1'
+    };
+
     const url = `${process.env.SECRET_API}/su_oss_chamado_reagendar`!;
     const username = process.env.SECRET_USERNAME;
     const password = process.env.SECRET_KEY;
@@ -25,7 +37,7 @@ export async function POST(req: Request) {
       redirect: "follow",
     });
 
-    const response = await fetch(`${url}`, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -35,17 +47,19 @@ export async function POST(req: Request) {
     });
 
     const data = await response.json();
-    console.log(data.id);
-    return NextResponse.json(data);
+    console.log('Rota 2 - API 2 Response:', data);
+
+    return NextResponse.json({
+      success: true,
+      response: data,
+    });
   } catch (error: any) {
-    console.error('Error:', error);
+    console.error('Error in Rota 2:', error);
     return NextResponse.json(
-      { error: 'Something went wrong', details: error.message },
+      { error: 'Something went wrong in Rota 2', details: error.message },
       { status: 500 }
     );
   }
 }
-// receber o retorno da abert do ticket
-// pegar o id do ticket e consultar as os abertas
-// chamar api com o id da os
-// acrescentar nos paramentos da api o que é necessário (data de inicio do agendamento, msg, técnico de id 1, resposta padrão)
+// processo 27 - SUPORTE TÉCNICO
+// assunto 117 - SEM CONEXÃO

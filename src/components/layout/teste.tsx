@@ -8,6 +8,7 @@ import RadioGroupEndereco from '../common/RadioGroupEndereco';
 import RadioGroupHorario from '../common/RadioGroupHorario';
 import RadioGroupOrigem from '../common/RadioGroupOrigem';
 import RadioGroupTipo from '../common/RadioGroupTipo';
+import { ChevronsLeftRightEllipsis } from 'lucide-react';
 
 interface Option {
   id: number;
@@ -115,7 +116,7 @@ export default function TesteForm({
 
   const submitData = async (payload: any) => {
     try {
-      const response = await fetch('/api/ixc', {
+      const responseRota1 = await fetch('/api/ixc', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +124,24 @@ export default function TesteForm({
         body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
+      const dataRota1 = await responseRota1.json();
+      // console.log('Dados Rota 1: ', dataRota1);
+      const responseRota2 = await fetch('/api/os', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: dataRota1.id,
+          menssagem: dataRota1.menssagem,
+          data_reservada: dataRota1.data_reservada,
+        }),
+      });
+
+      const dataRota2 = await responseRota2.json();
+      // console.log('Resposta da Rota 2:', dataRota2);
+      
+      if (responseRota1.ok) {
         alert('Formulário enviado com sucesso!');
       } else {
         alert('Ocorreu um erro ao enviar o formulário.');
@@ -254,7 +272,7 @@ export default function TesteForm({
       setDescricao(assunto.name);
     }
   }, [assunto]);
-  console.log(selectedValue);
+  // console.log(selectedValue);
   return (
     <form onSubmit={handleSubmit}>
 
