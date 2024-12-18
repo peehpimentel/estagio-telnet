@@ -17,6 +17,8 @@ async function getClientes() {
         cep: true,
         latitude: true,
         longitude: true,
+        telefone_celular: true,
+        whatsapp: true,
         cidadeID: {
           select: {
             nome: true,
@@ -41,6 +43,8 @@ async function getClientes() {
         long: cliente.longitude ?? undefined,
         city: cliente.cidadeID?.nome ?? undefined,
         state: cliente.cidadeID?.ufID?.sigla ?? undefined,
+        wpp: cliente.whatsapp ?? undefined,
+        cel: cliente.telefone_celular ?? undefined,
       })),
       error: false
     };
@@ -366,6 +370,8 @@ interface Option {
   state?: string,
   date?: Date,
   contract?: number,
+  wpp?: string;
+  cel?: string;
 }
 
 interface OptionCliente {

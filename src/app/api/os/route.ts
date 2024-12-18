@@ -17,7 +17,11 @@ export async function POST(req: Request) {
       }
     })
 
-
+if (existingRecord) {
+  return NextResponse.json({
+    data: existingRecord,
+  });
+}
 
     const param = {
       id_chamado: id, // Renomeado conforme necessário
@@ -59,6 +63,8 @@ export async function POST(req: Request) {
       { error: 'Something went wrong in Rota 2', details: error.message },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 // processo 27 - SUPORTE TÉCNICO

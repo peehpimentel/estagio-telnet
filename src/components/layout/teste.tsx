@@ -24,6 +24,8 @@ interface Option {
   state?: string,
   date?: Date,
   contract?: number,
+  wpp?: string;
+  cel?: string;
 }
 
 interface OptionCliente {
@@ -107,7 +109,7 @@ export default function TesteForm({
   const [filteredLogins, setFilteredLogins] = useState<OptionCliente[]>(loginData);
 
   const [selectedValue, setSelectedValue] = useState('N');
-  const [coordenadas, setCoordenadas] = useState({ lat: "", long: "" });
+  const [coordenadas, setCoordenadas] = useState({ lat: '', long: '' });
   
   // seleciona por padrão o valor "Nenhuma" do campo "Interação pendente"
   const handleChange = (event: { target: { value: SetStateAction<string>; }; }) => {
@@ -125,7 +127,7 @@ export default function TesteForm({
       });
 
       const dataRota1 = await responseRota1.json();
-      // console.log('Dados Rota 1: ', dataRota1);
+      console.log('Dados Rota 1: ', dataRota1.id);
       const responseRota2 = await fetch('/api/os', {
         method: 'POST',
         headers: {
@@ -139,7 +141,7 @@ export default function TesteForm({
       });
 
       const dataRota2 = await responseRota2.json();
-      // console.log('Resposta da Rota 2:', dataRota2);
+      console.log('Resposta da Rota 2:', dataRota2);
       
       if (responseRota1.ok) {
         alert('Formulário enviado com sucesso!');
@@ -215,6 +217,8 @@ export default function TesteForm({
       "latitude": coordenadas.lat,
       "longitude": coordenadas.long,
       "su_status": "N",
+      "cliente_telefone_celular": cliente.cel,
+      "cliente_whatsapp": cliente.wpp,
     }  
 
     setIsLoading(true);
@@ -272,7 +276,7 @@ export default function TesteForm({
       setDescricao(assunto.name);
     }
   }, [assunto]);
-  // console.log(selectedValue);
+console.log(tipo)
   return (
     <form onSubmit={handleSubmit}>
 

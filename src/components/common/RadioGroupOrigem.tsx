@@ -12,9 +12,9 @@ interface RadioGroupOrigemProps {
      <fieldset className=" text-gray-200 px-4 py-2 
      rounded focus:outline-none focus:border-blue-500">
         <div className="flex items-center space-x-2">
-            <RadioGroupItem value="i" id="r1" name="origin-group"/>
+            <RadioGroupItem value="I" id="r1" name="origin-group"/>
             <Label htmlFor="r1">Interna</Label>
-            <RadioGroupItem value="h" id="r2" name="origin-group"/>
+            <RadioGroupItem value="H" id="r2" name="origin-group"/>
             <Label htmlFor="r2">Hotsite</Label>
         </div>
     </fieldset>

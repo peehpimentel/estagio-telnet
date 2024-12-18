@@ -12,13 +12,13 @@ interface RadioGroupHorarioProps {
      <fieldset className="text-gray-200 px-4 py-2 
      rounded focus:outline-none focus:border-blue-500">
         <div className="flex items-center space-x-2">
-            <RadioGroupItem value="m" id="r1" name="hour-group"/>
+            <RadioGroupItem value="M" id="r1" name="hour-group"/>
             <Label htmlFor="r1">Manhã</Label>
-            <RadioGroupItem value="t" id="r2" name="hour-group"/>
+            <RadioGroupItem value="T" id="r2" name="hour-group"/>
             <Label htmlFor="r2">Tarde</Label>
-            <RadioGroupItem value="n" id="r3" name="hour-group"/>
+            <RadioGroupItem value="N" id="r3" name="hour-group"/>
             <Label htmlFor="r3">Noite</Label>
-            <RadioGroupItem value="q" id="r4" name="hour-group"/>
+            <RadioGroupItem value="Q" id="r4" name="hour-group"/>
             <Label htmlFor="r4">Qualquer</Label>
         </div>
     </fieldset>
