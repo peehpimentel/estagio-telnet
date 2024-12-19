@@ -14,17 +14,20 @@ export async function POST(req: Request) {
     const existingRecord = await prisma.su_oss_chamado.findFirst({
       where: {
         id_ticket: body.id
+      },
+      select: {
+        id: true,
       }
-    })
+    });
 
 if (existingRecord) {
   return NextResponse.json({
     data: existingRecord,
   });
 }
-
+console.log('prisma:', existingRecord.id);
     const param = {
-      id_chamado: id, // Renomeado conforme necessário
+      id_chamado: existingRecord, // Renomeado conforme necessário
       mensagem: menssagem,
       data_agendamento: data_reservada,
       status: 'AG',
