@@ -136,17 +136,16 @@ export default function TesteForm({
         body: JSON.stringify({
           id: dataRota1.id,
           menssagem: dataRota1.menssagem,
-          data_reservada: dataRota1.data_reservada,
+          data_agenda: dataRota1.data_reservada + ' 00:00:00',
         }),
       });
-
+      
       const dataRota2 = await responseRota2.json();
       console.log('Resposta da Rota 2:', dataRota2);
-      
-      if (responseRota1.ok) {
-        alert('Formulário enviado com sucesso!');
+      if (responseRota1.ok && responseRota2.ok) {
+        alert(`Formulário enviado com sucesso!\nAgentamento para: ${dataRota1.data_reservada}`);
       } else {
-        alert('Ocorreu um erro ao enviar o formulário.');
+        alert('Ocorreu um erro ao enviar o formulário. Ticket não agendado!');
       }
     } catch (error) {
       console.error('Erro ao enviar o formulário:', error);

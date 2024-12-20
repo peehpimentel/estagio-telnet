@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     // Parâmetros que vêm do body
-    const { id, menssagem, data_reservada } = body;
+    const { id, menssagem, data_agenda } = body;
 
     const existingRecord = await prisma.su_oss_chamado.findFirst({
       where: {
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     const param = {
       id_chamado: existingRecord.id, // Renomeado conforme necessário
       mensagem: menssagem,
-      data_agendamento: data_reservada,
+      data_agendamento: data_agenda,
       status: 'AG',
       id_tecnico: '1',
     };
