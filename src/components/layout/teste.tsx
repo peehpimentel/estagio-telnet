@@ -141,9 +141,13 @@ export default function TesteForm({
       });
       
       const dataRota2 = await responseRota2.json();
-      console.log('Resposta da Rota 2:', dataRota2);
-      if (responseRota1.ok && responseRota2.ok) {
+      console.log('Resposta da Rota 2:', dataRota2.response);
+      if (responseRota1.ok && responseRota2.ok && dataRota2.response != 'error') {
         alert(`Formulário enviado com sucesso!\nAgendamento para: ${dataRota1.data_reservada}`);
+      } else if (!responseRota1.ok) {
+        alert('Ocorreu um erro ao enviar o formulário');
+      } else if (dataRota2.response == 'error') {
+        alert(`Ocorreu um erro com o agendamento da O.S. Ticket não agendado! Erro: ${dataRota2.message}`);
       } else {
         alert('Ocorreu um erro ao enviar o formulário. Ticket não agendado!');
       }

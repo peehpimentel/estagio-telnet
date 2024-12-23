@@ -668,6 +668,7 @@ model funcionarios {
   maximo_os_dia                    Int?                                          @db.UnsignedInt
   vinculo_config_roteirizacao      funcionarios_vinculo_config_roteirizacao      @default(N)
   tipo_documento_identificacao_col funcionarios_tipo_documento_identificacao_col @default(UU13)
+  su_oss_chamado                   su_oss_chamado[] 
 
   @@index([cidade], map: "cidade")
   @@index([filial_id], map: "filial_id")
@@ -1101,6 +1102,7 @@ model su_oss_chamado {
   data_abertura              DateTime?                                  @default(now()) @db.DateTime(0)
   data_agenda                DateTime?                                  @db.DateTime(0)
   id_tecnico                 Int?
+  funcionariosID             funcionarios?                              @relation(fields: [id_tecnico], references: [id])
   mensagem_resposta          String?                                    @db.VarChar(3500)
   status                     su_oss_chamado_status                      @default(A)
   id_filial                  Int?

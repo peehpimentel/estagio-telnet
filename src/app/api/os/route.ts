@@ -20,6 +20,36 @@ export async function POST(req: Request) {
       },
     });
 
+    const tecnicoComMenosOrdens = await prisma.su_oss_chamado.groupBy({
+      by: ['id_tecnico'],
+      _count: {
+        id: true, // Conta as ordens de serviço
+      },
+      where: {
+        funcionariosID: {
+          id_setor_padrao: {
+            in: [25, 26],
+          },
+          ativo: 'S'
+        },
+      },
+      orderBy: {
+        _count: {
+          id: 'asc', // Ordena pelo menor número de ordens
+        },
+      },
+      take: 1, // Seleciona apenas o técnico com menos ordens
+    });
+    
+    // Verifica se há técnicos disponíveis
+    if (tecnicoComMenosOrdens.length === 0) {
+      throw new Error('Nenhum técnico disponível para atribuir a ordem.');
+    }
+    
+    // Obtém o ID do técnico com menos ordens
+    const tecnicoId = tecnicoComMenosOrdens[0].id_tecnico;
+    console.log('Técnico com menos ordens:', tecnicoId);
+
     if (!existingRecord) {
       console.error('No existing record found.');
       return NextResponse.json(
@@ -35,7 +65,7 @@ export async function POST(req: Request) {
       mensagem: menssagem,
       data_agendamento: data_agenda,
       status: 'AG',
-      id_tecnico: '1',
+      id_tecnico: tecnicoId,
     };
 
     const url = `${process.env.SECRET_API}/su_oss_chamado_reagendar`!;
@@ -60,11 +90,18 @@ export async function POST(req: Request) {
     const data = await response.json();
     console.log('Rota 2 - API 2 Response:', data);
 
-    return NextResponse.json({
-      success: true,
-      response: data,
-      param: param, // Inclui o objeto param na resposta final
-    });
+    if (data.type == 'error') {
+      return NextResponse.json({
+        message: data.message,
+        response: data.type,
+        param: param,        
+      })
+    } else {
+      return NextResponse.json({
+        response: data,
+        param: param,
+      });
+    }
   } catch (error: any) {
     console.error('Error in Rota 2:', error);
     return NextResponse.json(
@@ -77,3 +114,16 @@ export async function POST(req: Request) {
 }
 // processo 27 - SUPORTE TÉCNICO
 // assunto 117 - SEM CONEXÃO
+
+/*
+tabela de funcionarios, id_setor_padrao = 1, 25 e 26 ativo = s e escolher qual tem menos os agendada e -----| FEITO
+recuperar o que tem menos e retornar o id do técnico para inserir ------------------------------------------| FEITO
+su_oss_chamado e a funcionarios ----------------------------------------------------------------------------| FEITO
+
+olhar prioridade de cada os e enviar para os que tem a prioridade mais baixa -------------------------------| A FAZER
+
+olhar o status da conexão do login do cliente --------------------------------------------------------------| PRÓXIMO
+olhar o melhor horário para atendimento --------------------------------------------------------------------| PRÓXIMO
+analisar tudo isso e definir qual técnico tem os menores valores e agendar a os de acordo com esse técnico -| PRÓXIMO
+
+*/
