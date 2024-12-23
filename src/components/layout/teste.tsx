@@ -136,14 +136,14 @@ export default function TesteForm({
         body: JSON.stringify({
           id: dataRota1.id,
           menssagem: dataRota1.menssagem,
-          data_agenda: dataRota1.data_reservada + ' 00:00:00',
+          data_agenda: dataRota1.data_reservada /*+ ' 00:00:00'*/,
         }),
       });
       
       const dataRota2 = await responseRota2.json();
       console.log('Resposta da Rota 2:', dataRota2);
       if (responseRota1.ok && responseRota2.ok) {
-        alert(`Formulário enviado com sucesso!\nAgentamento para: ${dataRota1.data_reservada}`);
+        alert(`Formulário enviado com sucesso!\nAgendamento para: ${dataRota1.data_reservada}`);
       } else {
         alert('Ocorreu um erro ao enviar o formulário. Ticket não agendado!');
       }
@@ -183,9 +183,11 @@ export default function TesteForm({
       return;
     }
 
-    function formatDateToBR(dateUS: string){
-      const [year, month, day] = dateUS.split('-');
-      return `${day}/${month}/${year}`
+    function formatDateToBR(dateTimeUS: string) {
+      const [date, time] = dateTimeUS.split('T'); 
+      const [year, month, day] = date.split('-'); 
+    
+      return `${day}/${month}/${year} ${time}:00`; // Exemplo: 23/12/2024 10:30:00
     }
   
     const dataUS = date;
@@ -225,7 +227,7 @@ export default function TesteForm({
   }
 
   const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedDate(event.target.value);
+    setSelectedDate(event.target.value); 
   }
 
   const handleClienteChange = (cliente: Option) => {
@@ -512,7 +514,7 @@ console.log(tipo)
         <label htmlFor="data-reservada" 
         className="text-md font-medium text-gray-300 whitespace-nowrap justify-self-end text-right">Data reservada: </label>
         <div className="col-span-2">
-          <input type="date" name="date" id="date" className="border rounded-md shadow-sm
+          <input type="datetime-local" name="date" id="date" className="border rounded-md shadow-sm
          focus:ring-blue-500 focus:border-blue-500 px-4 py-2 bg-gray-800 text-gray-200" value={date} onChange={handleDateChange}/>
         </div>
     </div>
