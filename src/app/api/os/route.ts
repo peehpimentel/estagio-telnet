@@ -11,6 +11,22 @@ export async function POST(req: Request) {
     // Parâmetros que vêm do body
     const { id, menssagem, data_agenda } = body;
 
+    const clienteAtivo = await prisma.radusuarios.findFirst({
+      where: {
+        id_cliente: id, // Substitua por como o ID do cliente é referenciado
+      },
+      select: {
+        ativo: true,
+      },
+    });
+    
+    if (!clienteAtivo || clienteAtivo.ativo !== 'S') {
+      return NextResponse.json(
+        { error: 'Cliente inativo ou não encontrado.' },
+        { status: 403 }
+      );
+    }
+    
     const existingRecord = await prisma.su_oss_chamado.findFirst({
       where: {
         id_ticket: id,
@@ -55,7 +71,7 @@ const prioridades = await prisma.su_oss_chamado.findMany({
 });
 
 // Mapear prioridades para cada técnico
-const prioridadeMap = prioridades.reduce((acc, curr) => {
+const prioridadeMap = prioridades.reduce((acc, curr) => { //acc é o valor acumulado do reduce e curr é o valor atual
   if (curr.id_tecnico !== null) {
     acc[curr.id_tecnico] = curr.prioridade;
   }
