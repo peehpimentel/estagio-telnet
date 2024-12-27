@@ -185,7 +185,7 @@ su_oss_chamado e a funcionarios ------------------------------------------------
 
 olhar prioridade de cada os e enviar para os que tem a prioridade mais baixa -------------------------------| FEITO
 
-olhar o status da conexão do login do cliente --------------------------------------------------------------| PRÓXIMO
-olhar o melhor horário para atendimento --------------------------------------------------------------------| PRÓXIMO
-analisar tudo isso e definir qual técnico tem os menores valores e agendar a os de acordo com esse técnico -| PRÓXIMO
+olhar o status da conexão do login do cliente --------------------------------------------------------------| FEITO
+olhar o melhor horário para atendimento --------------------------------------------------------------------| FUTURO
+analisar tudo isso e definir qual técnico tem os menores valores e agendar a os de acordo com esse técnico -| FUTURO
 */
