@@ -20,12 +20,12 @@ export async function POST(req: Request) {
       },
     });
     
-    if (!clienteAtivo || clienteAtivo.ativo !== 'S') {
-      return NextResponse.json(
-        { error: 'Cliente inativo ou não encontrado.' },
-        { status: 403 }
-      );
-    }
+    // if (!clienteAtivo || clienteAtivo.ativo !== 'S') {
+    //   return NextResponse.json(
+    //     { error: 'Cliente inativo ou não encontrado.' },
+    //     { status: 403 }
+    //   );
+    // }
     
     const existingRecord = await prisma.su_oss_chamado.findFirst({
       where: {
