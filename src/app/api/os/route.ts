@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       },
     });
 
-    const tecnicoComMenosOrdens = await prisma.su_oss_chamado.groupBy({
+    const tecnicos = await prisma.su_oss_chamado.groupBy({
       by: ['id_tecnico'],
       _count: {
         id: true, // Conta as ordens de serviço
@@ -35,19 +35,65 @@ export async function POST(req: Request) {
       },
       orderBy: {
         _count: {
-          id: 'asc', // Ordena pelo menor número de ordens
+          id: 'asc', // Ordena pelo menor número de O.S
         },
       },
-      take: 1, // Seleciona apenas o técnico com menos ordens
+      take: 1,
     });
-    
+
+// Buscar prioridades para os técnicos
+const prioridades = await prisma.su_oss_chamado.findMany({
+  select: {
+    id_tecnico: true,
+    prioridade: true,
+  },
+  where: {
+    id_tecnico: {
+      in: tecnicos.map(t => t.id_tecnico).filter((id): id is number => id !== null), // o operador in só pode ser usado depois de selecionar um campo e para valores em lista
+    },
+  },
+});
+
+// Mapear prioridades para cada técnico
+const prioridadeMap = prioridades.reduce((acc, curr) => {
+  if (curr.id_tecnico !== null) {
+    acc[curr.id_tecnico] = curr.prioridade;
+  }
+  return acc;
+}, {} as Record<number, string>);
+
+// Ordenar técnicos
+const prioridadeOrder = {
+  C: 1,
+  A: 2,
+  N: 3,
+  B: 4,
+};
+
+const tecnicosOrdenados = tecnicos.sort((a, b) => {
+  const diffOrdens = a._count.id - b._count.id;
+  if (diffOrdens !== 0) {
+    return diffOrdens;
+  }
+
+  const prioridadeA = a.id_tecnico !== null 
+  ? prioridadeOrder[prioridadeMap[a.id_tecnico] as keyof typeof prioridadeOrder] || 5 
+  : 5;
+
+  const prioridadeB = b.id_tecnico !== null 
+  ? prioridadeOrder[prioridadeMap[b.id_tecnico] as keyof typeof prioridadeOrder] || 5 
+  : 5;
+
+  return prioridadeA - prioridadeB;
+});
+
     // Verifica se há técnicos disponíveis
-    if (tecnicoComMenosOrdens.length === 0) {
+    if (tecnicos.length === 0) {
       throw new Error('Nenhum técnico disponível para atribuir a ordem.');
     }
     
     // Obtém o ID do técnico com menos ordens
-    const tecnicoId = tecnicoComMenosOrdens[0].id_tecnico;
+    const tecnicoId = tecnicos[0].id_tecnico;
     console.log('Técnico com menos ordens:', tecnicoId);
 
     if (!existingRecord) {
@@ -112,18 +158,18 @@ export async function POST(req: Request) {
     await prisma.$disconnect();
   }
 }
-// processo 27 - SUPORTE TÉCNICO
-// assunto 117 - SEM CONEXÃO
 
 /*
+processo 27 - SUPORTE TÉCNICO
+assunto 117 - SEM CONEXÃO
+
 tabela de funcionarios, id_setor_padrao = 1, 25 e 26 ativo = s e escolher qual tem menos os agendada e -----| FEITO
 recuperar o que tem menos e retornar o id do técnico para inserir ------------------------------------------| FEITO
 su_oss_chamado e a funcionarios ----------------------------------------------------------------------------| FEITO
 
-olhar prioridade de cada os e enviar para os que tem a prioridade mais baixa -------------------------------| A FAZER
+olhar prioridade de cada os e enviar para os que tem a prioridade mais baixa -------------------------------| FEITO
 
 olhar o status da conexão do login do cliente --------------------------------------------------------------| PRÓXIMO
 olhar o melhor horário para atendimento --------------------------------------------------------------------| PRÓXIMO
 analisar tudo isso e definir qual técnico tem os menores valores e agendar a os de acordo com esse técnico -| PRÓXIMO
-
 */
